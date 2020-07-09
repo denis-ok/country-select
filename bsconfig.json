@@ -1,0 +1,31 @@
+{
+  "name": "reatris",
+  "reason": {
+    "react-jsx": 3
+  },
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": true,
+      "type": "dev"
+    }
+  ],
+  "package-specs": {
+    "module": "es6",
+    "in-source": true
+  },
+  "bs-dependencies": [
+    "reason-react",
+    "bs-webapi",
+    "bs-bastet",
+    "relude",
+    "relude-reason-react"
+  ],
+  "bs-dev-dependencies": ["@glennsl/bs-jest", "bs-react-testing-library"],
+  "warnings": {
+    "error": "+101"
+  },
+  "suffix": ".bs.js",
+  "namespace": true,
+  "refmt": 3
+}
