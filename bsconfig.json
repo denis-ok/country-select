@@ -1,11 +1,21 @@
 {
-  "name": "reatris",
+  "name": "country-select",
+  "namespace": true,
   "reason": {
     "react-jsx": 3
   },
   "sources": [
     {
       "dir": "src",
+      "subdirs": true
+    },
+    {
+      "dir": "__tests__",
+      "subdirs": true,
+      "type": "dev"
+    },
+    {
+      "dir": "demo",
       "subdirs": true,
       "type": "dev"
     }
@@ -26,6 +36,5 @@
     "error": "+101"
   },
   "suffix": ".bs.js",
-  "namespace": true,
   "refmt": 3
 }
