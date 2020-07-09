@@ -5,7 +5,7 @@
 /coverage
 
 # webpack output
-/demo/build
+/demo/bundle
 
 # bucklescript
 /lib

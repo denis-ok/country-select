@@ -3,18 +3,22 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 const path = require("path");
 
-const outputDir = path.join(__dirname, "demo", "build");
-const publicDir = path.join(__dirname, "demo", "public");
+const demoDir = path.join(__dirname, "demo");
+const outputDir = path.join(demoDir, "bundle");
+const publicDir = path.join(demoDir, "public");
 
-const isProd = process.env.NODE_ENV === "production";
+const production = process.env.NODE_ENV === "production";
 
 module.exports = {
-  entry: "./demo/Index.bs.js",
-  mode: isProd ? "production" : "development",
+  entry: path.join(demoDir, "Index.bs.js"),
+
+  mode: production ? "production" : "development",
+
   output: {
     path: outputDir,
     filename: "bundle.js",
   },
+
   module: {
     rules: [
       {
@@ -35,10 +39,11 @@ module.exports = {
       },
     ],
   },
+
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "demo/index.html"),
+      template: path.join(demoDir, "index.html"),
     }),
   ],
 
