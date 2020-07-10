@@ -1,2 +1,2 @@
 [@react.component]
-let make = () => <Component />;
+let make = () => <CountrySelect />;
