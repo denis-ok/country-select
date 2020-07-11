@@ -20,7 +20,13 @@ module Response = {
   };
 };
 
-module Request = {
+module type Request = {
+  let getCountriesIO:
+    string =>
+    Relude.IO.t(array(ReactSelect.Option.t), ReludeFetch.Error.t(string));
+};
+
+module Request: Request = {
   open Relude.IO;
 
   let getCountriesIO = url =>

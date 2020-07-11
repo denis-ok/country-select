@@ -6,10 +6,10 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class=" css-2b097c-container"
+        class=" css-14jk2my-container"
       >
         <div
-          class=" css-yk16xz-control"
+          class=" css-1fhf3k1-control"
         >
           <div
             class=" css-l1xr2i-Component"
@@ -17,7 +17,7 @@ Object {
             <div
               class=" css-1wa3eu0-placeholder"
             >
-              Select...
+              Loading...
             </div>
             <div
               class="css-xry0bu-Component"
@@ -31,6 +31,7 @@ Object {
                   autocapitalize="none"
                   autocomplete="off"
                   autocorrect="off"
+                  disabled=""
                   id="react-select-2-input"
                   spellcheck="false"
                   style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
@@ -47,8 +48,22 @@ Object {
           <div
             class=" css-ny0e4k-Component"
           >
+            <div
+              aria-hidden="true"
+              class=" css-at12u2-loadingIndicator"
+            >
+              <span
+                class="css-imwzes-Component"
+              />
+              <span
+                class="css-1ue98e-Component"
+              />
+              <span
+                class="css-fwsb3e-Component"
+              />
+            </div>
             <span
-              class=" css-1okebmr-indicatorSeparator"
+              class=" css-109onse-indicatorSeparator"
             />
             <div
               aria-hidden="true"
@@ -74,10 +89,10 @@ Object {
   </body>,
   "container": <div>
     <div
-      class=" css-2b097c-container"
+      class=" css-14jk2my-container"
     >
       <div
-        class=" css-yk16xz-control"
+        class=" css-1fhf3k1-control"
       >
         <div
           class=" css-l1xr2i-Component"
@@ -85,7 +100,7 @@ Object {
           <div
             class=" css-1wa3eu0-placeholder"
           >
-            Select...
+            Loading...
           </div>
           <div
             class="css-xry0bu-Component"
@@ -99,6 +114,7 @@ Object {
                 autocapitalize="none"
                 autocomplete="off"
                 autocorrect="off"
+                disabled=""
                 id="react-select-2-input"
                 spellcheck="false"
                 style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
@@ -115,8 +131,22 @@ Object {
         <div
           class=" css-ny0e4k-Component"
         >
+          <div
+            aria-hidden="true"
+            class=" css-at12u2-loadingIndicator"
+          >
+            <span
+              class="css-imwzes-Component"
+            />
+            <span
+              class="css-1ue98e-Component"
+            />
+            <span
+              class="css-fwsb3e-Component"
+            />
+          </div>
           <span
-            class=" css-1okebmr-indicatorSeparator"
+            class=" css-109onse-indicatorSeparator"
           />
           <div
             aria-hidden="true"
