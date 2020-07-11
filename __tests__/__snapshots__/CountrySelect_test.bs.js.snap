@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`CountrySelect Loading placeholder 1`] = `
+<div
+  class=" css-1wa3eu0-placeholder"
+>
+  Loading...
+</div>
+`;
+
 exports[`CountrySelect Render 1`] = `
 Object {
   "asFragment": [Function],
@@ -221,4 +229,12 @@ Object {
   "rerender": [Function],
   "unmount": [Function],
 }
+`;
+
+exports[`CountrySelect Select Country placeholder 1`] = `
+<div
+  class=" css-1wa3eu0-placeholder"
+>
+  Select Country
+</div>
 `;

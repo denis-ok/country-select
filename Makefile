@@ -4,13 +4,13 @@ start:
 # disable implicit cleanup after each test for react-testing-library with RTL_SKIP_AUTO_CLEANUP=true
 
 test:
-	RTL_SKIP_AUTO_CLEANUP=true npm run jest
+	npm run jest
 
 test-watch:
-	RTL_SKIP_AUTO_CLEANUP=true npm run jest -- --watchAll
+	npm run jest -- --watchAll
 
 test-coverage:
-	RTL_SKIP_AUTO_CLEANUP=true npm run jest -- --coverage
+	npm run jest -- --coverage
 
 webpack:
 	NODE_ENV=production npm run webpack
