@@ -39,11 +39,13 @@
   "dependencies": {
     "bs-bastet": "^1.2.5",
     "bs-decode": "^0.11.2",
+    "bs-fetch": "^0.6.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-select": "^3.1.0",
     "reason-react": "^0.9.1",
     "relude": "^0.63.1",
+    "relude-fetch": "^0.8.0",
     "relude-reason-react": "^0.10.0"
   }
 }
