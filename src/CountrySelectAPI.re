@@ -27,5 +27,6 @@ module Request = {
     ReludeFetch.get(url)
     >>= ReludeFetch.Response.StatusCode.ensure2xx
     >>= ReludeFetch.Response.json
-    >>= Response.decode(url);
+    >>= Response.decode(url)
+    |> Relude.IO.withDelay(2000);
 };
