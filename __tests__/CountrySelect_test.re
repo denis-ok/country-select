@@ -26,7 +26,8 @@ let getByText = str => getByText(~matcher=`Str(str), ~options=?None);
 
 let findByText = str => findByText(~matcher=`Str(str), ~options=?None);
 
-let renderSelector = () => render(<CountrySelect country=None />);
+let renderSelector = () =>
+  render(<CountrySelect country=None onChange=ignore />);
 
 describe("CountrySelect", () => {
   test("Render", () =>
@@ -34,7 +35,7 @@ describe("CountrySelect", () => {
   );
 
   testPromise("Pass country prop", () =>
-    render(<CountrySelect country={Some("bd")} />)
+    render(<CountrySelect country={Some("bd")} onChange=ignore />)
     |> findByText("Bangladesh")
     |> Promise.map(el => expect(el) |> toMatchSnapshot)
   );

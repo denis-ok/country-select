@@ -1,2 +1,3 @@
 [@react.component]
-let make = () => <CountrySelect country=None />;
+let make = () =>
+  <CountrySelect country=None onChange={country => Js.log(country)} />;

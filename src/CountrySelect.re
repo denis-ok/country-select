@@ -6,7 +6,12 @@ let placeholder = React.string("Select Country");
 
 module Functor = (Request: CountrySelectAPI.Request) => {
   [@react.component]
-  let make = (~optionsUrl: option(string)=?, ~country: option(string)) => {
+  let make =
+      (
+        ~country: option(string),
+        ~onChange: string => unit,
+        ~optionsUrl: option(string)=?,
+      ) => {
     let (options, setOptions) = React.useState(() => None);
 
     let (selectedCountry: option(ReactSelect.Option.t), setSelectedCountry) =
@@ -33,8 +38,10 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       (options, country),
     );
 
-    let onChangeCountry = (selectedCountry, _) =>
+    let onChangeCountry = (selectedCountry: ReactSelect.Option.t, _) => {
+      onChange(selectedCountry.value);
       setSelectedCountry(_ => Some(selectedCountry));
+    };
 
     switch (options) {
     | None =>
