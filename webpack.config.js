@@ -29,10 +29,16 @@ module.exports = {
           },
           {
             loader: "css-loader",
+          },
+        ],
+      },
+      {
+        test: /\.svg$/,
+        use: [
+          {
+            loader: "file-loader",
             options: {
-              modules: {
-                localIdentName: "[local]-[hash:base64]",
-              },
+              name: "images/[hash]-[name].[ext]",
             },
           },
         ],
