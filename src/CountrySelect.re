@@ -10,9 +10,10 @@ module Styles = {
   let wrapper = style([position(relative)]);
 };
 
-let placeholderLoading = React.string("Loading...");
-
-let placeholder = React.string("Select Country");
+module Text = {
+  let placeholderLoading = React.string("Loading...");
+  let placeholder = React.string("Select Country");
+};
 
 let filterOptions = (options: array(ReactSelect.Option.t), filterString) => {
   let searchSubstring = String.normalizeString(filterString);
@@ -90,7 +91,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
         isLoading=true
         isDisabled=true
         isSearchable=false
-        placeholder=placeholderLoading
+        placeholder=Text.placeholderLoading
         options=[||]
       />
     | Some(options) =>
@@ -105,7 +106,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
           onFocus
           onChange=onChangeCountry
           options={filterOptions(options, filterString)}
-          placeholder
+          placeholder=Text.placeholder
           value=?selectedCountry
           components=customComponents
         />
