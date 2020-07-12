@@ -1,7 +1,14 @@
 open Belt;
 open Functions;
+open Utils.React;
 
 module String = Utils.String;
+
+module Styles = {
+  open Css;
+
+  let wrapper = style([position(relative)]);
+};
 
 let placeholderLoading = React.string("Loading...");
 
@@ -23,6 +30,7 @@ let filterOptions = (options: array(ReactSelect.Option.t), filterString) => {
 
 let customComponents: ReactSelect.Components.t = {
   option: CountrySelectOption.component,
+  menu: CountrySelectMenu.component,
 };
 
 module Functor = (Request: CountrySelectAPI.Request) => {
@@ -86,11 +94,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
         options=[||]
       />
     | Some(options) =>
-      <>
-        <CountrySelectSearchFilter
-          value=filterString
-          onChange=onChangeFilterString
-        />
+      <div className=Styles.wrapper>
         <ReactSelect
           blurInputOnSelect=true
           isLoading=false
@@ -105,7 +109,12 @@ module Functor = (Request: CountrySelectAPI.Request) => {
           value=?selectedCountry
           components=customComponents
         />
-      </>
+        {menuOpened
+         &&& <CountrySelectSearchFilter
+               value=filterString
+               onChange=onChangeFilterString
+             />}
+      </div>
     };
   };
 };

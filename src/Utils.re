@@ -8,3 +8,8 @@ module String = {
   let hasSubstring = (~search, string) =>
     Relude.String.toLowerCase(string) |> Relude.String.contains(~search);
 };
+
+module React = {
+  let (&&&) = (condition: bool, element: React.element) =>
+    if (condition) {element} else {React.null};
+};

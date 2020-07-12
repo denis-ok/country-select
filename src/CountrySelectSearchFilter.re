@@ -97,7 +97,9 @@ module Styles = {
       placeholder([color(`hex("D8D8D8"))]),
     ]);
 
-  let wrapper = style([position(relative)]);
+  let wrapper = style([position(absolute), top(px(38)), left(px(-2))]);
+
+  let iconInputWrapper = style([position(relative)]);
 
   let icon = style([position(absolute), left(px(11)), top(px(10))]);
 };
@@ -117,14 +119,16 @@ let make = (~value: string, ~onChange: string => unit) => {
   };
 
   <div className=Styles.wrapper>
-    <div className=Styles.icon> Styles.searchIcon </div>
-    <input
-      name="searchCountry"
-      value
-      onChange
-      onClick
-      placeholder
-      className=Styles.input
-    />
+    <div className=Styles.iconInputWrapper>
+      <div className=Styles.icon> Styles.searchIcon </div>
+      <input
+        name="searchCountry"
+        value
+        onChange
+        onClick
+        placeholder
+        className=Styles.input
+      />
+    </div>
   </div>;
 };
