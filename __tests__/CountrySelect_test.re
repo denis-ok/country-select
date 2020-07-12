@@ -68,19 +68,19 @@ describe("CountrySelect", () => {
     |> Promise.map(el => expect(el) |> toMatchSnapshot)
   );
 
-  testPromise("Select Country option", () => {
-    let rendered = renderSelector();
+  // testPromise("Select Country option", () => {
+  //   let rendered = renderSelector();
 
-    rendered
-    |> findByText("Select Country")
-    |> Promise.map(input => {
-         act(() => {
-           input |> FireEvent.focus(~eventInit=?None);
-           input |> Event.pressKeyDown;
-           input |> Event.pressKeyDown;
-         })
-       })
-    |> Promise.flatMap(() => rendered |> findByText("Bangladesh"))
-    |> Promise.map(el => expect(el) |> toMatchSnapshot);
-  });
+  //   rendered
+  //   |> findByText("Select Country")
+  //   |> Promise.map(input => {
+  //        act(() => {
+  //          input |> FireEvent.focus(~eventInit=?None);
+  //          input |> Event.pressKeyDown;
+  //          input |> Event.pressKeyDown;
+  //        })
+  //      })
+  //   |> Promise.flatMap(() => rendered |> findByText("Bangladesh"))
+  //   |> Promise.map(el => expect(el) |> toMatchSnapshot);
+  // });
 });
