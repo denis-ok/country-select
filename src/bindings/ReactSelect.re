@@ -5,31 +5,29 @@ module Option = {
   };
 };
 
-module Components = {
-  module CustomComponent = {
-    module ProvidedProps = {
+module CustomComponent = {
+  module ProvidedProps = {
+    module InnerProps = {
       type t = {
-        innerRef: Js.Json.t,
-        innerProps: Js.Json.t,
-        label: string,
-        value: string,
+        id: string,
+        onClick: ReactEvent.Mouse.t => unit,
+        onMouseMove: ReactEvent.Mouse.t => unit,
+        onMouseOver: ReactEvent.Mouse.t => unit,
       };
-      // isMulti,
-      // clearValue
-      // getStyles
-      // getValue
-      // hasValue
-      // isMulti
-      // isRtl
-      // options
-      // selectOption
-      // setValue
-      // selectProps
     };
 
-    type t = ProvidedProps.t => React.element;
+    type t = {
+      // innerRef,
+      innerProps: InnerProps.t,
+      label: string,
+      value: string,
+    };
   };
 
+  type t = ProvidedProps.t => React.element;
+};
+
+module Components = {
   type t = {
     [@bs.as "Option"]
     option: CustomComponent.t,
@@ -38,7 +36,7 @@ module Components = {
 
 module DefaultComponents = {
   module Component = {
-    type t = Components.CustomComponent.ProvidedProps.t => React.element;
+    type t = CustomComponent.ProvidedProps.t => React.element;
   };
 
   type t;
