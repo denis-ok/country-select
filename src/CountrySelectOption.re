@@ -20,11 +20,26 @@ module Styles = {
       paddingLeft(px(12)),
       hover([backgroundColor(`rgb((245, 245, 245))), cursor(pointer)]),
     ]);
+
+  let focused = style([backgroundColor(`rgb((235, 235, 235)))]);
+
+  let selected = style([fontWeight(`bold)]);
 };
 
+open Styles;
+
 let component: ReactSelect.CustomComponent.t =
-  props =>
-    <div className=Styles.wrapper onClick={props.innerProps.onClick}>
-      <FlagIconCss countryCode={props.value} />
-      <p className=Styles.paragraph> {React.string(props.label)} </p>
+  ({isFocused, isSelected, innerProps, value, label}) => {
+    let wrapperClass =
+      switch (isFocused, isSelected) {
+      | (true, true) => {j|$(wrapper) $(focused) $(selected)|j}
+      | (false, true) => {j|$(wrapper) $(selected)|j}
+      | (true, false) => {j|$(wrapper) $(focused)|j}
+      | (false, false) => Styles.wrapper
+      };
+
+    <div className=wrapperClass onClick={innerProps.onClick}>
+      <FlagIconCss countryCode=value />
+      <p className=Styles.paragraph> {React.string(label)} </p>
     </div>;
+  };

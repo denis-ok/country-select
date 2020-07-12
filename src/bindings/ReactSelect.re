@@ -21,6 +21,8 @@ module CustomComponent = {
       innerProps: InnerProps.t,
       label: string,
       value: string,
+      isSelected: bool,
+      isFocused: bool,
     };
   };
 
