@@ -48,15 +48,19 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       <ReactSelect
         isLoading=true
         isDisabled=true
+        isSearchable=false
         placeholder=placeholderLoading
         options=[||]
       />
     | Some(options) =>
       <ReactSelect
+        isLoading=false
+        isDisabled=false
+        isSearchable=false
+        onChange=onChangeCountry
         options
         placeholder
         value=?selectedCountry
-        onChange=onChangeCountry
       />
     };
   };
