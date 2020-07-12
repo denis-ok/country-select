@@ -5,6 +5,10 @@ open ReactTestingLibrary;
 module Promise = {
   let map: ('a => 'b, Js.Promise.t('a)) => Js.Promise.t('b) =
     (f, p) => p |> Js.Promise.then_(a => Js.Promise.resolve(f(a)));
+
+  let flatMap:
+    ('a => Js.Promise.t('b), Js.Promise.t('a)) => Js.Promise.t('b) =
+    (f, p) => p |> Js.Promise.then_(a => f(a));
 };
 
 module FakeOptions = {
@@ -29,6 +33,18 @@ let findByText = str => findByText(~matcher=`Str(str), ~options=?None);
 let renderSelector = () =>
   render(<CountrySelect country=None onChange=ignore />);
 
+module Event = {
+  let pressKeyDown =
+    FireEvent.keyDown(
+      ~eventInit={"key": "ArrowDown", "keyCode": 40, "code": 40},
+    );
+
+  let pressEnter =
+    FireEvent.keyDown(
+      ~eventInit={"key": "Enter", "keyCode": 13, "code": 13},
+    );
+};
+
 describe("CountrySelect", () => {
   test("Render", () =>
     expect(renderSelector()) |> toMatchSnapshot
@@ -51,4 +67,20 @@ describe("CountrySelect", () => {
     |> findByText("Select Country")
     |> Promise.map(el => expect(el) |> toMatchSnapshot)
   );
+
+  testPromise("Select Country option", () => {
+    let rendered = renderSelector();
+
+    rendered
+    |> findByText("Select Country")
+    |> Promise.map(input => {
+         act(() => {
+           input |> FireEvent.focus(~eventInit=?None);
+           input |> Event.pressKeyDown;
+           input |> Event.pressKeyDown;
+         })
+       })
+    |> Promise.flatMap(() => rendered |> findByText("Bangladesh"))
+    |> Promise.map(el => expect(el) |> toMatchSnapshot);
+  });
 });
