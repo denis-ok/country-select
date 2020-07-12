@@ -1,2 +1,2 @@
 [@react.component]
-let make = () => <CountrySelect />;
+let make = () => <CountrySelect country=None />;

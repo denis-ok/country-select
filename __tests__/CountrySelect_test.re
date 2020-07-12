@@ -26,11 +26,17 @@ let getByText = str => getByText(~matcher=`Str(str), ~options=?None);
 
 let findByText = str => findByText(~matcher=`Str(str), ~options=?None);
 
-let renderSelector = () => render(<CountrySelect />);
+let renderSelector = () => render(<CountrySelect country=None />);
 
 describe("CountrySelect", () => {
   test("Render", () =>
     expect(renderSelector()) |> toMatchSnapshot
+  );
+
+  testPromise("Pass country prop", () =>
+    render(<CountrySelect country={Some("bd")} />)
+    |> findByText("Bangladesh")
+    |> Promise.map(el => expect(el) |> toMatchSnapshot)
   );
 
   testPromise("Loading placeholder", () =>

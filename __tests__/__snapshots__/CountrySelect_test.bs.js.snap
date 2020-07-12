@@ -8,6 +8,14 @@ exports[`CountrySelect Loading placeholder 1`] = `
 </div>
 `;
 
+exports[`CountrySelect Pass country prop 1`] = `
+<div
+  class=" css-1uccc91-singleValue"
+>
+  Bangladesh
+</div>
+`;
+
 exports[`CountrySelect Render 1`] = `
 Object {
   "asFragment": [Function],
