@@ -20,23 +20,6 @@ let filterOptions = (options: array(ReactSelect.Option.t), filterString) => {
   };
 };
 
-module SearchFilter = {
-  [@react.component]
-  let make = (~value: string, ~onChange: string => unit) => {
-    let onChange = event => {
-      let value = Utils.getStringValueFromEvent(event);
-      onChange(value);
-    };
-
-    let onClick = (event: ReactEvent.Mouse.t) => {
-      ReactEvent.Mouse.stopPropagation(event);
-      ReactEvent.Mouse.preventDefault(event);
-    };
-
-    <input name="searchCountry" value onChange onClick />;
-  };
-};
-
 module Functor = (Request: CountrySelectAPI.Request) => {
   [@react.component]
   let make =
@@ -89,7 +72,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       />
     | Some(options) =>
       <>
-        <SearchFilter
+        <CountrySelectSearchFilter
           value=filterString
           onChange={str => setFilterString(_ => str)}
         />
