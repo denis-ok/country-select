@@ -1,21 +1,22 @@
 open Belt;
+open Functions;
+
+module String = Utils.String;
 
 let placeholderLoading = React.string("Loading...");
 
 let placeholder = React.string("Select Country");
 
 let filterOptions = (options: array(ReactSelect.Option.t), filterString) => {
-  let normalizedFilterString =
-    Js.String.trim(filterString)->Js.String.toLowerCase;
+  let searchSubstring = String.normalizeString(filterString);
 
-  if (Js.String.length(normalizedFilterString) == 0) {
+  let hasSubstring = String.hasSubstring(~search=searchSubstring);
+
+  if (Relude.String.isEmpty(searchSubstring)) {
     options;
   } else {
     options->Array.keep(({value, label}) =>
-      label->Js.String.toLowerCase->Js.String.includes(normalizedFilterString)
-      || value
-         ->Js.String.toLowerCase
-         ->Js.String.includes(normalizedFilterString)
+      value->hasSubstring || label->hasSubstring
     );
   };
 };
@@ -35,9 +36,15 @@ module Functor = (Request: CountrySelectAPI.Request) => {
 
     let (filterString, setFilterString) = React.useState(() => "");
 
+    let onChangeFilterString = str => setFilterString(const(str));
+
+    let (menuOpened, toggleMenu) = React.useState(() => false);
+
+    let toggleMenu = () => toggleMenu(opened => !opened);
+
     ReludeReact.Effect.useIOOnMount(
       Request.getCountriesIO(optionsUrl),
-      options => setOptions(_ => Some(options)),
+      options => setOptions(const(Some(options))),
       error => Js.log(ReludeFetch.Error.show(e => e, error)),
     );
 
@@ -48,7 +55,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
           let mbSelectedValue =
             options->Array.getBy(opt => opt.value == country);
 
-          setSelectedCountry(_ => mbSelectedValue);
+          setSelectedCountry(const(mbSelectedValue));
         | _ => ()
         };
         None;
@@ -60,6 +67,10 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       onChange(selectedCountry.value);
       setSelectedCountry(_ => Some(selectedCountry));
     };
+
+    let onBlur = omit(toggleMenu);
+
+    let onFocus = onBlur;
 
     switch (options) {
     | None =>
@@ -74,12 +85,16 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       <>
         <CountrySelectSearchFilter
           value=filterString
-          onChange={str => setFilterString(_ => str)}
+          onChange=onChangeFilterString
         />
         <ReactSelect
+          blurInputOnSelect=true
           isLoading=false
           isDisabled=false
           isSearchable=false
+          menuIsOpen=menuOpened
+          onBlur
+          onFocus
           onChange=onChangeCountry
           options={filterOptions(options, filterString)}
           placeholder
