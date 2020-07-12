@@ -30,9 +30,16 @@ module CustomComponent = {
 };
 
 module Components = {
+  // Every value of type below obviously must be option(CustomComponent.t)
+  // Unfortunately, passing None just broke everything with an exception
+  // Probably because we have { Menu: undefined } object instead of ommited key
+  // Mayybe this can be avoided with usage of Js.Dict API
+  // Or some kind of util that rejects reduntand keys
   type t = {
     [@bs.as "Option"]
     option: CustomComponent.t,
+    [@bs.as "Menu"]
+    menu: CustomComponent.t,
   };
 };
 
@@ -46,6 +53,9 @@ module DefaultComponents = {
 
   [@bs.get] external _option: t => Component.t = "Option";
   let option = components->_option;
+
+  [@bs.get] external _menu: t => Component.t = "Menu";
+  let menu = components->_menu;
 };
 
 [@react.component] [@bs.module "react-select"]
