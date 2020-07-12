@@ -25,6 +25,8 @@
     "in-source": true
   },
   "bs-dependencies": [
+    "bs-css",
+    "bs-css-emotion",
     "bs-bastet",
     "bs-decode",
     "bs-fetch",
