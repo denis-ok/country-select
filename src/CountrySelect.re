@@ -1,8 +1,25 @@
 open Belt;
+open Functions;
+
+module String = Utils.String;
 
 let placeholderLoading = React.string("Loading...");
 
 let placeholder = React.string("Select Country");
+
+let filterOptions = (options: array(ReactSelect.Option.t), filterString) => {
+  let searchSubstring = String.normalizeString(filterString);
+
+  let hasSubstring = String.hasSubstring(~search=searchSubstring);
+
+  if (Relude.String.isEmpty(searchSubstring)) {
+    options;
+  } else {
+    options->Array.keep(({value, label}) =>
+      value->hasSubstring || label->hasSubstring
+    );
+  };
+};
 
 module Functor = (Request: CountrySelectAPI.Request) => {
   [@react.component]
@@ -17,9 +34,17 @@ module Functor = (Request: CountrySelectAPI.Request) => {
     let (selectedCountry: option(ReactSelect.Option.t), setSelectedCountry) =
       React.useState(() => None);
 
+    let (filterString, setFilterString) = React.useState(() => "");
+
+    let onChangeFilterString = str => setFilterString(const(str));
+
+    let (menuOpened, toggleMenu) = React.useState(() => false);
+
+    let toggleMenu = () => toggleMenu(opened => !opened);
+
     ReludeReact.Effect.useIOOnMount(
       Request.getCountriesIO(optionsUrl),
-      options => setOptions(_ => Some(options)),
+      options => setOptions(const(Some(options))),
       error => Js.log(ReludeFetch.Error.show(e => e, error)),
     );
 
@@ -30,7 +55,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
           let mbSelectedValue =
             options->Array.getBy(opt => opt.value == country);
 
-          setSelectedCountry(_ => mbSelectedValue);
+          setSelectedCountry(const(mbSelectedValue));
         | _ => ()
         };
         None;
@@ -43,6 +68,10 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       setSelectedCountry(_ => Some(selectedCountry));
     };
 
+    let onBlur = omit(toggleMenu);
+
+    let onFocus = onBlur;
+
     switch (options) {
     | None =>
       <ReactSelect
@@ -53,15 +82,25 @@ module Functor = (Request: CountrySelectAPI.Request) => {
         options=[||]
       />
     | Some(options) =>
-      <ReactSelect
-        isLoading=false
-        isDisabled=false
-        isSearchable=false
-        onChange=onChangeCountry
-        options
-        placeholder
-        value=?selectedCountry
-      />
+      <>
+        <CountrySelectSearchFilter
+          value=filterString
+          onChange=onChangeFilterString
+        />
+        <ReactSelect
+          blurInputOnSelect=true
+          isLoading=false
+          isDisabled=false
+          isSearchable=false
+          menuIsOpen=menuOpened
+          onBlur
+          onFocus
+          onChange=onChangeCountry
+          options={filterOptions(options, filterString)}
+          placeholder
+          value=?selectedCountry
+        />
+      </>
     };
   };
 };

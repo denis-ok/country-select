@@ -207,16 +207,6 @@ Object {
 }
 `;
 
-exports[`CountrySelect Select Country option 1`] = `
-<div
-  class=" css-yt9ioa-option"
-  id="react-select-6-option-1"
-  tabindex="-1"
->
-  Bangladesh
-</div>
-`;
-
 exports[`CountrySelect Select Country placeholder 1`] = `
 <div
   class=" css-1wa3eu0-placeholder"

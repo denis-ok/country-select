@@ -1,19 +1,10 @@
-module Dom = {
-  let getKeyName = Webapi.Dom.KeyboardEvent.key;
-  let isKeyRepeated = Webapi.Dom.KeyboardEvent.repeat;
+let getStringValueFromEvent = (event: ReactEvent.Form.t) =>
+  event->ReactEvent.Form.target##value->Belt.Option.getWithDefault("");
 
-  let addKeyboardListeners = (~keyDownHandler, ~keyUpHandler, document) => {
-    Webapi.Dom.Document.addKeyDownEventListener(keyDownHandler, document);
-    Webapi.Dom.Document.addKeyUpEventListener(keyUpHandler, document);
-  };
+module String = {
+  let normalizeString = string =>
+    Js.String.trim(string)->Js.String.toLowerCase;
 
-  let removeKeyboardListeners = (~keyDownHandler, ~keyUpHandler, document) => {
-    Webapi.Dom.Document.removeKeyDownEventListener(keyDownHandler, document);
-    Webapi.Dom.Document.removeKeyUpEventListener(keyUpHandler, document);
-  };
-};
-
-module React = {
-  let (&&&) = (condition: bool, element: React.element) =>
-    if (condition) {element} else {React.null};
+  let hasSubstring = (~search, string) =>
+    Relude.String.toLowerCase(string) |> Relude.String.contains(~search);
 };
