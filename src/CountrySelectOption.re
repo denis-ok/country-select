@@ -29,7 +29,7 @@ module Styles = {
 open Styles;
 
 let component: ReactSelect.CustomComponent.t =
-  ({isFocused, isSelected, innerProps, value, label}) => {
+  ({isFocused, isSelected, innerProps, innerRef, value, label}) => {
     let wrapperClass =
       switch (isFocused, isSelected) {
       | (true, true) => {j|$(wrapper) $(focused) $(selected)|j}
@@ -38,7 +38,7 @@ let component: ReactSelect.CustomComponent.t =
       | (false, false) => Styles.wrapper
       };
 
-    <div className=wrapperClass onClick={innerProps.onClick}>
+    <div ref=innerRef className=wrapperClass onClick={innerProps.onClick}>
       <FlagIconCss countryCode=value />
       <p className=Styles.paragraph> {React.string(label)} </p>
     </div>;

@@ -17,7 +17,7 @@ module CustomComponent = {
     };
 
     type t = {
-      // innerRef,
+      innerRef: ReactDOM.domRef,
       innerProps: InnerProps.t,
       label: string,
       value: string,
