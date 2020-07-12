@@ -20,14 +20,11 @@ module Styles = {
       paddingLeft(px(12)),
       hover([backgroundColor(`rgb((245, 245, 245))), cursor(pointer)]),
     ]);
-
-  let icon =
-    style([width(px(14)), height(px(10)), backgroundColor(gray)]);
 };
 
 let component: ReactSelect.CustomComponent.t =
   props =>
     <div className=Styles.wrapper onClick={props.innerProps.onClick}>
-      <div className=Styles.icon />
+      <FlagIconCss countryCode={props.value} />
       <p className=Styles.paragraph> {React.string(props.label)} </p>
     </div>;
