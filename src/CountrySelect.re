@@ -21,6 +21,16 @@ let filterOptions = (options: array(ReactSelect.Option.t), filterString) => {
   };
 };
 
+module CustomOption = {
+  let component: ReactSelect.CustomComponent.t =
+    props =>
+      <div onClick={props.innerProps.onClick}>
+        {React.string(props.value)}
+      </div>;
+};
+
+let components: ReactSelect.Components.t = {option: CustomOption.component};
+
 module Functor = (Request: CountrySelectAPI.Request) => {
   [@react.component]
   let make =
@@ -99,6 +109,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
           options={filterOptions(options, filterString)}
           placeholder
           value=?selectedCountry
+          components
         />
       </>
     };
