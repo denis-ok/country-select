@@ -98,17 +98,17 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       <div className=Styles.wrapper>
         <ReactSelect
           blurInputOnSelect=true
+          components=customComponents
           isLoading=false
           isDisabled=false
           isSearchable=false
           menuIsOpen=menuOpened
           onBlur
-          onFocus
           onChange=onChangeCountry
+          onFocus
           options={filterOptions(options, filterString)}
           placeholder=Text.placeholder
           value=?selectedCountry
-          components=customComponents
         />
         {menuOpened
          &&& <CountrySelectSearchFilter

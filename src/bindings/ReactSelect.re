@@ -71,8 +71,11 @@ external make:
     ~menuIsOpen: bool=?,
     ~name: string=?,
     ~onBlur: ReactEvent.Focus.t => unit=?,
-    ~onFocus: ReactEvent.Focus.t => unit=?,
     ~onChange: (Option.t, string) => unit=?,
+    ~onFocus: ReactEvent.Focus.t => unit=?,
+    ~onKeyDown: ReactEvent.Keyboard.t => unit=?,
+    ~onMenuOpen: unit => unit=?,
+    ~onMenuClose: unit => unit=?,
     ~options: array(Option.t),
     ~value: Option.t=?,
     ~placeholder: React.element=?
