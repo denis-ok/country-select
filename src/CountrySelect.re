@@ -32,6 +32,7 @@ let filterOptions = (options: array(ReactSelect.Option.t), filterString) => {
 let customComponents: ReactSelect.Components.t = {
   option: CountrySelectOption.component,
   menu: CountrySelectMenu.component,
+  menuList: CountrySelectMenuList.component,
 };
 
 module Functor = (Request: CountrySelectAPI.Request) => {

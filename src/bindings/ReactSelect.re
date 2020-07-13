@@ -23,6 +23,7 @@ module CustomComponent = {
       value: string,
       isSelected: bool,
       isFocused: bool,
+      children: React.element,
     };
   };
 
@@ -40,6 +41,8 @@ module Components = {
     option: CustomComponent.t,
     [@bs.as "Menu"]
     menu: CustomComponent.t,
+    [@bs.as "MenuList"]
+    menuList: CustomComponent.t,
   };
 };
 

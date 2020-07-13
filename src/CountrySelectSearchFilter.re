@@ -84,7 +84,7 @@ module Styles = {
       width(px(230)),
       height(px(36)),
       borderStyle(`solid),
-      borderColor(hex("cccccc")),
+      borderColor(`rgba((0, 0, 0, 0.08))),
       borderRadius(px(0)),
       borderTopLeftRadius(px(2)),
       borderTopRightRadius(px(2)),
