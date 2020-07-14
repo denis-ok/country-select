@@ -109,7 +109,13 @@ module Styles = {
 let placeholder = "Search";
 
 [@react.component]
-let make = (~value: string, ~onChange: string => unit, ~onFocus: unit => unit) => {
+let make =
+    (
+      ~value: string,
+      ~onChange: string => unit,
+      ~onFocus: unit => unit,
+      ~setRef: React.ref(Js.Nullable.t(Dom.element)) => unit,
+    ) => {
   let onChange = event => {
     let value = Utils.Dom.getStringValueFromEvent(event);
     onChange(value);
@@ -119,10 +125,17 @@ let make = (~value: string, ~onChange: string => unit, ~onFocus: unit => unit) =
     ReactEvent.Mouse.preventDefault(event);
   };
 
+  let inputRef: React.ref(Js.Nullable.t(Dom.element)) =
+    React.useRef(Js.Nullable.null);
+
+  ReludeReact.Effect.useOnMount(() => setRef(inputRef));
+
   <div className=Styles.wrapper>
     <div className=Styles.iconInputWrapper>
       <div className=Styles.icon> Styles.searchIcon </div>
       <input
+        autoFocus=true
+        ref={ReactDOMRe.Ref.domRef(inputRef)}
         name="searchCountry"
         value
         onChange

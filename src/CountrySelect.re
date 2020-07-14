@@ -14,6 +14,8 @@ type state = {
   filter: string,
   menuOpened: bool,
   focusedElement: option(Types.Element.t),
+  filterRef: option(React.ref(Js.Nullable.t(Dom.element))),
+  buttonRef: option(React.ref(Js.Nullable.t(Dom.element))),
 };
 
 let initialState = {
@@ -22,6 +24,8 @@ let initialState = {
   filter: "",
   menuOpened: false,
   focusedElement: None,
+  filterRef: None,
+  buttonRef: None,
 };
 
 type action =
@@ -31,6 +35,8 @@ type action =
   | ChangeCountry(Types.Option.t, string => unit)
   | SetFilter(string)
   | SetFocusedElement(Types.Element.t)
+  | SetFilterRef(React.ref(Js.Nullable.t(Dom.element)))
+  | SetButtonRef(React.ref(Js.Nullable.t(Dom.element)))
   | ToggleMenu
   | Blur
   | FocusButton
@@ -65,9 +71,18 @@ let reducer =
   | SetFocusedElement(element) =>
     Update({...state, focusedElement: Some(element)})
 
+  | SetFilterRef(ref_) => Update({...state, filterRef: Some(ref_)})
+
+  | SetButtonRef(ref_) => Update({...state, buttonRef: Some(ref_)})
+
   | Blur => Update({...state, focusedElement: None, menuOpened: false})
-  | FocusButton
-  | FocusFilter
+
+  | FocusButton =>
+    SideEffect(({state}) => Utils.React.focusOptRef(state.buttonRef))
+
+  | FocusFilter =>
+    SideEffect(({state}) => Utils.React.focusOptRef(state.filterRef))
+
   | FocusList
   | NextItem
   | PrevItem
@@ -141,15 +156,16 @@ module Functor = (Request: CountrySelectAPI.Request) => {
             switch (element, key) {
             | (_, Unsupported) => NoOp
             | (_, Escape) => Blur
-            | (Button, ArrowUp) => Blur
-            | (Button, ArrowDown) => FocusFilter
-            | (Button, Tab) => FocusFilter
+            | (Button, ArrowUp) => ToggleMenu
+            | (Button, ArrowDown) when !menuOpened => ToggleMenu
+            | (Button, ArrowDown) when menuOpened => FocusFilter
+            | (Button, Tab) when !menuOpened => ToggleMenu
             | (Filter, ArrowUp) => FocusButton
             | (Filter, ArrowDown) => FocusList
             | (Filter, Tab) => FocusList
             | (Options, ArrowUp) => PrevItem
             | (Options, ArrowDown) => NextItem
-            | (Options, Tab) => Blur
+            | (Options, Tab) => NoOp
             | (Options, Space) => SelectItem
             | (Options, Enter) => SelectItem
             | _ => NoOp
@@ -170,6 +186,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
            onClick=ignore
            opened=false
            onFocus=onFocusButton
+           setRef={ref_ => send(SetButtonRef(ref_))}
          />
        | Some(options) =>
          let filteredOptions = Utils.filterOptions(options, filter);
@@ -183,6 +200,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
              onClick=toggleMenu
              opened=menuOpened
              onFocus=onFocusButton
+             setRef={ref_ => send(SetButtonRef(ref_))}
            />
            {menuOpened
             &&& <CountrySelectMenu.Wrapper>
@@ -190,6 +208,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
                     value=filter
                     onChange=onChangeFilter
                     onFocus=onFocusFilter
+                    setRef={ref_ => send(SetFilterRef(ref_))}
                   />
                   <CountrySelectMenu.CountryList
                     options=filteredOptions

@@ -26,6 +26,20 @@ let filterOptions =
 module React = {
   let (&&&) = (condition: bool, element: React.element) =>
     if (condition) {element} else {React.null};
+
+  let focusRef = (inputRef: React.ref(Js.Nullable.t(Dom.element))) => {
+    inputRef.current
+    ->Js.Nullable.toOption
+    ->Belt.Option.map(ref => ReactDOMRe.domElementToObj(ref))
+    ->Belt.Option.map(node => Js.Global.setTimeout(() => node##focus(), 10))
+    ->ignore;
+  };
+
+  let focusOptRef = ref_ =>
+    switch (ref_) {
+    | None => ()
+    | Some(ref_) => focusRef(ref_)
+    };
 };
 
 module Dom = {
