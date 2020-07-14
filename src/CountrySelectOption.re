@@ -46,6 +46,7 @@ let make =
       ~value: string,
       ~label: string,
       ~onClick: unit => unit,
+      ~onFocus: unit => unit,
     ) => {
   let wrapperClass =
     switch (isFocused, isSelected) {
@@ -60,7 +61,11 @@ let make =
     onClick();
   };
 
-  <div tabIndex=0 className=wrapperClass onClick>
+  <div
+    tabIndex=0
+    className=wrapperClass
+    onClick
+    onFocus={Functions.omit(onFocus)}>
     <FlagIconCss countryCode=value />
     <p className=Styles.paragraph> {React.string(label)} </p>
   </div>;

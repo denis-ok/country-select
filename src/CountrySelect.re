@@ -1,16 +1,19 @@
 open Belt;
 open Utils.React;
 
+module Types = CountrySelectTypes;
+
 module Text = {
   let loading = "Loading...";
   let selectCountry = "Select Country";
 };
 
 type state = {
-  options: option(array(CountrySelectTypes.Option.t)),
-  selectedCountry: option(CountrySelectTypes.Option.t),
+  options: option(array(Types.Option.t)),
+  selectedCountry: option(Types.Option.t),
   filter: string,
   menuOpened: bool,
+  focusedElement: option(Types.Element.t),
 };
 
 let initialState = {
@@ -18,14 +21,16 @@ let initialState = {
   selectedCountry: None,
   filter: "",
   menuOpened: false,
+  focusedElement: None,
 };
 
 type action =
-  | FetchCountriesSuccess(array(CountrySelectTypes.Option.t))
+  | FetchCountriesSuccess(array(Types.Option.t))
   | FetchCountriesFailure(ReludeFetch.Error.t(string))
-  | SetCountry(option(CountrySelectTypes.Option.t))
-  | ChangeCountry(CountrySelectTypes.Option.t, string => unit)
+  | SetCountry(option(Types.Option.t))
+  | ChangeCountry(Types.Option.t, string => unit)
   | SetFilter(string)
+  | SetFocusedElement(Types.Element.t)
   | ToggleMenu;
 
 let reducer =
@@ -46,7 +51,11 @@ let reducer =
     )
 
   | SetFilter(filter) => Update({...state, filter})
+
   | ToggleMenu => Update({...state, menuOpened: !state.menuOpened})
+
+  | SetFocusedElement(element) =>
+    Update({...state, focusedElement: Some(element)})
   };
 
 module Functor = (Request: CountrySelectAPI.Request) => {
@@ -58,7 +67,10 @@ module Functor = (Request: CountrySelectAPI.Request) => {
         ~optionsUrl: option(string)=?,
         ~className: option(string)=?,
       ) => {
-    let ({options, selectedCountry, filter, menuOpened}: state, send) =
+    let (
+      {options, selectedCountry, filter, menuOpened, focusedElement}: state,
+      send,
+    ) =
       ReludeReact.Reducer.useReducer(reducer, initialState);
 
     ReludeReact.Effect.useIOOnMount(
@@ -84,8 +96,22 @@ module Functor = (Request: CountrySelectAPI.Request) => {
 
     let onChangeFilter = str => SetFilter(str)->send;
 
-    let onChangeCountry = (country: CountrySelectTypes.Option.t) => {
+    let onChangeCountry = (country: Types.Option.t) =>
       ChangeCountry(country, onChange)->send;
+
+    let onFocusButton = () => {
+      SetFocusedElement(Types.Element.Button)->send;
+    };
+
+    let onFocusFilter = () => {
+      SetFocusedElement(Types.Element.Filter)->send;
+    };
+
+    let onFocusList = () => {
+      switch (focusedElement) {
+      | Some(Options) => ()
+      | _ => SetFocusedElement(Types.Element.Options)->send
+      };
     };
 
     let className = Option.getWithDefault(className, "");
@@ -96,6 +122,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
         text=Text.loading
         onClick=ignore
         opened=false
+        onFocus=onFocusButton
       />
     | Some(options) =>
       let filteredOptions = Utils.filterOptions(options, filter);
@@ -108,16 +135,19 @@ module Functor = (Request: CountrySelectAPI.Request) => {
           )
           onClick=toggleMenu
           opened=menuOpened
+          onFocus=onFocusButton
         />
         {menuOpened
          &&& <CountrySelectMenu.Wrapper>
                <CountrySelectSearchFilter
                  value=filter
                  onChange=onChangeFilter
+                 onFocus=onFocusFilter
                />
                <CountrySelectMenu.CountryList
                  options=filteredOptions
                  onChangeCountry
+                 onFocus=onFocusList
                />
              </CountrySelectMenu.Wrapper>}
       </div>;

@@ -74,13 +74,19 @@ module Styles = {
 };
 
 [@react.component]
-let make = (~text: string, ~opened: bool, ~onClick: unit => unit) => {
+let make =
+    (
+      ~text: string,
+      ~opened: bool,
+      ~onClick: unit => unit,
+      ~onFocus: unit => unit,
+    ) => {
   let onClick = (event: ReactEvent.Mouse.t) => {
     ReactEvent.Mouse.preventDefault(event);
     onClick();
   };
 
-  <button className=Styles.button onClick>
+  <button className=Styles.button onClick onFocus={Functions.omit(onFocus)}>
     <div className=Styles.text> {React.string(text)} </div>
     {Styles.iconSvg(opened)}
   </button>;

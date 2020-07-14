@@ -72,6 +72,7 @@ module CountryList = {
       (
         ~options: array(CountrySelectTypes.Option.t),
         ~onChangeCountry: CountrySelectTypes.Option.t => unit,
+        ~onFocus: unit => unit,
       ) => {
     let elements =
       options->Belt.Array.map(
@@ -83,6 +84,7 @@ module CountryList = {
           isFocused=false
           isSelected=false
           onClick={() => onChangeCountry(option)}
+          onFocus
         />
       );
 

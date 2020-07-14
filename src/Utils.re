@@ -1,5 +1,4 @@
-let getStringValueFromEvent = (event: ReactEvent.Form.t) =>
-  event->ReactEvent.Form.target##value->Belt.Option.getWithDefault("");
+open Functions;
 
 module String = {
   let normalizeString = string =>
@@ -27,4 +26,12 @@ let filterOptions =
 module React = {
   let (&&&) = (condition: bool, element: React.element) =>
     if (condition) {element} else {React.null};
+};
+
+module Dom = {
+  let getStringValueFromEvent = (event: ReactEvent.Form.t) =>
+    event->ReactEvent.Form.target##value->Belt.Option.getWithDefault("");
+
+  let keyFromEvent =
+    ReactEvent.Keyboard.key >> CountrySelectTypes.KeyboardButton.fromString;
 };

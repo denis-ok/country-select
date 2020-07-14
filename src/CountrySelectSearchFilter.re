@@ -109,9 +109,9 @@ module Styles = {
 let placeholder = "Search";
 
 [@react.component]
-let make = (~value: string, ~onChange: string => unit) => {
+let make = (~value: string, ~onChange: string => unit, ~onFocus: unit => unit) => {
   let onChange = event => {
-    let value = Utils.getStringValueFromEvent(event);
+    let value = Utils.Dom.getStringValueFromEvent(event);
     onChange(value);
   };
 
@@ -129,6 +129,7 @@ let make = (~value: string, ~onChange: string => unit) => {
         onClick
         placeholder
         className=Styles.input
+        onFocus={Functions.omit(onFocus)}
       />
     </div>
   </div>;
