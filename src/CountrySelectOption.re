@@ -23,7 +23,6 @@ module Styles = {
     style([
       boxSizing(borderBox),
       display(flexBox),
-      width(px(Const.Size.menuWidthPx)),
       minHeight(px(Const.Size.menuOptionHeightPx)),
       flexDirection(`row),
       alignItems(`center),

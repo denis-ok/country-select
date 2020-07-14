@@ -70,7 +70,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       (options, country),
     );
 
-    let onChangeCountry = (selectedCountry: CountrySelectTypes.Option.t, _) => {
+    let onChangeCountry = (selectedCountry: CountrySelectTypes.Option.t) => {
       onChange(selectedCountry.value);
       setSelectedCountry(_ => Some(selectedCountry));
     };
@@ -100,21 +100,10 @@ module Functor = (Request: CountrySelectAPI.Request) => {
                  value=filterString
                  onChange=onChangeFilterString
                />
-               <CountrySelectMenu.List>
-                 {filteredOptions
-                  ->Array.map(
-                      ({value, label} as option: CountrySelectTypes.Option.t) =>
-                      <CountrySelectOption
-                        key=value
-                        value
-                        label
-                        isFocused=false
-                        isSelected=false
-                        onClick={() => onChangeCountry(option, ())}
-                      />
-                    )
-                  ->React.array}
-               </CountrySelectMenu.List>
+               <CountrySelectMenu.CountryList
+                 options=filteredOptions
+                 onChangeCountry
+               />
              </CountrySelectMenu.Wrapper>}
       </div>;
     };

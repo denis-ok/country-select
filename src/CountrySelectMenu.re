@@ -51,3 +51,45 @@ module List = {
     <div className=Styles.className> children </div>;
   };
 };
+
+module ListReactWindow = {
+  [@react.component]
+  let make = (~children: array(React.element)) => {
+    <ReactWindow.FixedSizeList
+      className=List.Styles.className
+      height=Const.Size.menuHeightPx
+      width=Const.Size.menuWidthPx
+      itemSize=Const.Size.menuOptionHeightPx
+      itemCount={Array.length(children)}>
+      {({index, style}) => <div style> {children[index]} </div>}
+    </ReactWindow.FixedSizeList>;
+  };
+};
+
+module CountryList = {
+  [@react.component]
+  let make =
+      (
+        ~options: array(CountrySelectTypes.Option.t),
+        ~onChangeCountry: CountrySelectTypes.Option.t => unit,
+      ) => {
+    let elements =
+      options->Belt.Array.map(
+        ({value, label} as option: CountrySelectTypes.Option.t) =>
+        <CountrySelectOption
+          key=value
+          value
+          label
+          isFocused=false
+          isSelected=false
+          onClick={() => onChangeCountry(option)}
+        />
+      );
+
+    if (Array.length(options) <= 6) {
+      <List> {React.array(elements)} </List>;
+    } else {
+      <ListReactWindow> elements </ListReactWindow>;
+    };
+  };
+};

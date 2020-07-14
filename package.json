@@ -46,6 +46,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-select": "^3.1.0",
+    "react-window": "^1.8.5",
     "reason-react": "^0.9.1",
     "relude": "^0.63.1",
     "relude-fetch": "^0.8.0",
