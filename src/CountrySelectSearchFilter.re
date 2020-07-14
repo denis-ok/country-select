@@ -117,7 +117,7 @@ let make =
       ~setRef: React.ref(Js.Nullable.t(Dom.element)) => unit,
     ) => {
   let onChange = event => {
-    let value = Utils.Dom.getStringValueFromEvent(event);
+    let value = Utils.ReactDom.getStringValueFromEvent(event);
     onChange(value);
   };
 

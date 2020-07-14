@@ -1,11 +1,21 @@
 open Belt;
-open Utils.React;
+open Utils.Infix;
 
 module Types = CountrySelectTypes;
 
 module Text = {
   let loading = "Loading...";
   let selectCountry = "Select Country";
+};
+
+module Styles = {
+  open Css;
+
+  let root =
+    style([
+      boxSizing(borderBox),
+      width(px(CountrySelectConstants.Style.Size.menuWidthPx)),
+    ]);
 };
 
 type state = {
@@ -78,10 +88,10 @@ let reducer =
   | Blur => Update({...state, focusedElement: None, menuOpened: false})
 
   | FocusButton =>
-    SideEffect(({state}) => Utils.React.focusOptRef(state.buttonRef))
+    SideEffect(({state}) => Utils.ReactDom.focusOptRef(state.buttonRef))
 
   | FocusFilter =>
-    SideEffect(({state}) => Utils.React.focusOptRef(state.filterRef))
+    SideEffect(({state}) => Utils.ReactDom.focusOptRef(state.filterRef))
 
   | FocusList
   | NextItem
@@ -110,6 +120,11 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       options => FetchCountriesSuccess(options)->send,
       error => FetchCountriesFailure(error)->send,
     );
+
+    let rootRef: React.ref(Js.Nullable.t(Dom.element)) =
+      React.useRef(Js.Nullable.null);
+
+    Utils.ReactDom.useClickOutside(rootRef, () => send(Blur));
 
     React.useEffect2(
       () => {
@@ -152,7 +167,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
           switch (focusedElement) {
           | None => NoOp
           | Some(element) =>
-            let key = Utils.Dom.keyFromEvent(event);
+            let key = Utils.ReactDom.keyFromEvent(event);
             switch (element, key) {
             | (_, Unsupported) => NoOp
             | (_, Escape) => Blur
@@ -176,9 +191,9 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       send(action);
     };
 
-    let className = Option.getWithDefault(className, "");
+    let className = Styles.root ++? className;
 
-    <div className onKeyDown>
+    <div ref={ReactDOMRe.Ref.domRef(rootRef)} className onKeyDown>
       {switch (options) {
        | None =>
          <CountrySelectDropdownButton
