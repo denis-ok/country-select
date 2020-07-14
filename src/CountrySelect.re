@@ -31,7 +31,15 @@ type action =
   | ChangeCountry(Types.Option.t, string => unit)
   | SetFilter(string)
   | SetFocusedElement(Types.Element.t)
-  | ToggleMenu;
+  | ToggleMenu
+  | Blur
+  | FocusButton
+  | FocusFilter
+  | FocusList
+  | NextItem
+  | PrevItem
+  | SelectItem
+  | NoOp;
 
 let reducer =
     (state: state, action: action): ReludeReact.Reducer.update(action, state) =>
@@ -56,6 +64,15 @@ let reducer =
 
   | SetFocusedElement(element) =>
     Update({...state, focusedElement: Some(element)})
+
+  | Blur => Update({...state, focusedElement: None, menuOpened: false})
+  | FocusButton
+  | FocusFilter
+  | FocusList
+  | NextItem
+  | PrevItem
+  | SelectItem
+  | NoOp => NoUpdate
   };
 
 module Functor = (Request: CountrySelectAPI.Request) => {
@@ -114,44 +131,75 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       };
     };
 
+    let onKeyDown = (event: ReactEvent.Keyboard.t) => {
+      let action: action =
+        Types.Element.(
+          switch (focusedElement) {
+          | None => NoOp
+          | Some(element) =>
+            let key = Utils.Dom.keyFromEvent(event);
+            switch (element, key) {
+            | (_, Unsupported) => NoOp
+            | (_, Escape) => Blur
+            | (Button, ArrowUp) => Blur
+            | (Button, ArrowDown) => FocusFilter
+            | (Button, Tab) => FocusFilter
+            | (Filter, ArrowUp) => FocusButton
+            | (Filter, ArrowDown) => FocusList
+            | (Filter, Tab) => FocusList
+            | (Options, ArrowUp) => PrevItem
+            | (Options, ArrowDown) => NextItem
+            | (Options, Tab) => Blur
+            | (Options, Space) => SelectItem
+            | (Options, Enter) => SelectItem
+            | _ => NoOp
+            };
+          }
+        );
+
+      send(action);
+    };
+
     let className = Option.getWithDefault(className, "");
 
-    switch (options) {
-    | None =>
-      <CountrySelectDropdownButton
-        text=Text.loading
-        onClick=ignore
-        opened=false
-        onFocus=onFocusButton
-      />
-    | Some(options) =>
-      let filteredOptions = Utils.filterOptions(options, filter);
+    <div className onKeyDown>
+      {switch (options) {
+       | None =>
+         <CountrySelectDropdownButton
+           text=Text.loading
+           onClick=ignore
+           opened=false
+           onFocus=onFocusButton
+         />
+       | Some(options) =>
+         let filteredOptions = Utils.filterOptions(options, filter);
 
-      <div className>
-        <CountrySelectDropdownButton
-          text=Option.(
-            map(selectedCountry, c => c.label)
-            ->getWithDefault(Text.selectCountry)
-          )
-          onClick=toggleMenu
-          opened=menuOpened
-          onFocus=onFocusButton
-        />
-        {menuOpened
-         &&& <CountrySelectMenu.Wrapper>
-               <CountrySelectSearchFilter
-                 value=filter
-                 onChange=onChangeFilter
-                 onFocus=onFocusFilter
-               />
-               <CountrySelectMenu.CountryList
-                 options=filteredOptions
-                 onChangeCountry
-                 onFocus=onFocusList
-               />
-             </CountrySelectMenu.Wrapper>}
-      </div>;
-    };
+         <>
+           <CountrySelectDropdownButton
+             text=Option.(
+               map(selectedCountry, c => c.label)
+               ->getWithDefault(Text.selectCountry)
+             )
+             onClick=toggleMenu
+             opened=menuOpened
+             onFocus=onFocusButton
+           />
+           {menuOpened
+            &&& <CountrySelectMenu.Wrapper>
+                  <CountrySelectSearchFilter
+                    value=filter
+                    onChange=onChangeFilter
+                    onFocus=onFocusFilter
+                  />
+                  <CountrySelectMenu.CountryList
+                    options=filteredOptions
+                    onChangeCountry
+                    onFocus=onFocusList
+                  />
+                </CountrySelectMenu.Wrapper>}
+         </>;
+       }}
+    </div>;
   };
 };
 
