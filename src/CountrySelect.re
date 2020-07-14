@@ -1,16 +1,17 @@
 open Belt;
 open Functions;
+open Utils.React;
 
-module String = Utils.String;
+module Text = {
+  let loading = "Loading...";
+  let selectCountry = "Select Country";
+};
 
-let placeholderLoading = React.string("Loading...");
+let filterOptions =
+    (options: array(CountrySelectTypes.Option.t), filterString) => {
+  let searchSubstring = Utils.String.normalizeString(filterString);
 
-let placeholder = React.string("Select Country");
-
-let filterOptions = (options: array(ReactSelect.Option.t), filterString) => {
-  let searchSubstring = String.normalizeString(filterString);
-
-  let hasSubstring = String.hasSubstring(~search=searchSubstring);
+  let hasSubstring = Utils.String.hasSubstring(~search=searchSubstring);
 
   if (Relude.String.isEmpty(searchSubstring)) {
     options;
@@ -21,10 +22,6 @@ let filterOptions = (options: array(ReactSelect.Option.t), filterString) => {
   };
 };
 
-let customComponents: ReactSelect.Components.t = {
-  option: CountrySelectOption.component,
-};
-
 module Functor = (Request: CountrySelectAPI.Request) => {
   [@react.component]
   let make =
@@ -32,10 +29,16 @@ module Functor = (Request: CountrySelectAPI.Request) => {
         ~country: option(string),
         ~onChange: string => unit,
         ~optionsUrl: option(string)=?,
+        ~className: option(string)=?,
       ) => {
+    let className = Option.getWithDefault(className, "");
+
     let (options, setOptions) = React.useState(() => None);
 
-    let (selectedCountry: option(ReactSelect.Option.t), setSelectedCountry) =
+    let (
+      selectedCountry: option(CountrySelectTypes.Option.t),
+      setSelectedCountry,
+    ) =
       React.useState(() => None);
 
     let (filterString, setFilterString) = React.useState(() => "");
@@ -67,45 +70,53 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       (options, country),
     );
 
-    let onChangeCountry = (selectedCountry: ReactSelect.Option.t, _) => {
+    let onChangeCountry = (selectedCountry: CountrySelectTypes.Option.t, _) => {
       onChange(selectedCountry.value);
       setSelectedCountry(_ => Some(selectedCountry));
     };
 
-    let onBlur = omit(toggleMenu);
-
-    let onFocus = onBlur;
-
     switch (options) {
     | None =>
-      <ReactSelect
-        isLoading=true
-        isDisabled=true
-        isSearchable=false
-        placeholder=placeholderLoading
-        options=[||]
+      <CountrySelectDropdownButton
+        text=Text.loading
+        onClick=ignore
+        opened=false
       />
     | Some(options) =>
-      <>
-        <CountrySelectSearchFilter
-          value=filterString
-          onChange=onChangeFilterString
+      let filteredOptions = filterOptions(options, filterString);
+
+      <div className>
+        <CountrySelectDropdownButton
+          text=Option.(
+            map(selectedCountry, c => c.label)
+            ->getWithDefault(Text.selectCountry)
+          )
+          onClick=toggleMenu
+          opened=menuOpened
         />
-        <ReactSelect
-          blurInputOnSelect=true
-          isLoading=false
-          isDisabled=false
-          isSearchable=false
-          menuIsOpen=menuOpened
-          onBlur
-          onFocus
-          onChange=onChangeCountry
-          options={filterOptions(options, filterString)}
-          placeholder
-          value=?selectedCountry
-          components=customComponents
-        />
-      </>
+        {menuOpened
+         &&& <CountrySelectMenu.Wrapper>
+               <CountrySelectSearchFilter
+                 value=filterString
+                 onChange=onChangeFilterString
+               />
+               <CountrySelectMenu.List>
+                 {filteredOptions
+                  ->Array.map(
+                      ({value, label} as option: CountrySelectTypes.Option.t) =>
+                      <CountrySelectOption
+                        key=value
+                        value
+                        label
+                        isFocused=false
+                        isSelected=false
+                        onClick={() => onChangeCountry(option, ())}
+                      />
+                    )
+                  ->React.array}
+               </CountrySelectMenu.List>
+             </CountrySelectMenu.Wrapper>}
+      </div>;
     };
   };
 };

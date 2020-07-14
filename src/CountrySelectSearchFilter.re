@@ -1,6 +1,8 @@
 module Styles = {
   open Css;
 
+  module Const = CountrySelectConstants.Style;
+
   let searchIcon =
     <svg
       width="13px"
@@ -58,7 +60,6 @@ module Styles = {
               stroke="#000000"
               strokeWidth="1"
               d="M415.994183,242.5 C416.687368,242.5 417.314477,242.778691 417.767928,243.231246 C418.219958,243.682384 418.5,244.306575 418.5,245.001858 L418.5,245.001858 L418.5,439.998142 C418.5,440.688422 418.218797,441.313612 417.765105,441.766408 C417.310836,442.21978 416.683774,442.5 415.994183,442.5 L415.994183,442.5 L190.005817,442.5 C189.312632,442.5 188.685523,442.221309 188.232072,441.768754 C187.780042,441.317616 187.5,440.693425 187.5,439.998142 L187.5,439.998142 L187.5,245.001858 C187.5,244.311578 187.781203,243.686388 188.234895,243.233592 C188.689164,242.78022 189.316226,242.5 190.005817,242.5 L190.005817,242.5 Z"
-              fill="#FFFFFF"
               fillRule="evenodd"
             />
           </g>
@@ -74,30 +75,33 @@ module Styles = {
       </g>
     </svg>;
 
+  let inputFocus = focus([borderColor(Const.Color.focus)]);
+
   let input =
     style([
       boxSizing(borderBox),
       display(flexBox),
       flexDirection(row),
       alignItems(center),
+      margin(px(0)),
+      padding(px(0)),
       paddingLeft(px(31)),
-      width(px(230)),
-      height(px(36)),
-      borderStyle(`solid),
-      borderColor(hex("cccccc")),
-      borderRadius(px(0)),
-      borderTopLeftRadius(px(2)),
-      borderTopRightRadius(px(2)),
-      borderWidth(px(1)),
-      marginTop(px(2)),
-      marginBottom(px(2)),
+      paddingRight(px(10)),
+      width(`percent(100.0)),
+      height(px(Const.Size.searchHeightPx)),
+      borderWidth(px(0)),
+      borderBottomWidth(px(1)),
+      borderBottomColor(Const.Color.menuBorder),
       fontSize(px(14)),
       fontFamily(`custom("Arial")),
       focus([outlineStyle(`none)]),
       placeholder([color(`hex("D8D8D8"))]),
+      inputFocus,
     ]);
 
-  let wrapper = style([position(relative)]);
+  let wrapper = style([top(px(38)), left(px(-2))]);
+
+  let iconInputWrapper = style([position(relative)]);
 
   let icon = style([position(absolute), left(px(11)), top(px(10))]);
 };
@@ -112,19 +116,20 @@ let make = (~value: string, ~onChange: string => unit) => {
   };
 
   let onClick = (event: ReactEvent.Mouse.t) => {
-    ReactEvent.Mouse.stopPropagation(event);
     ReactEvent.Mouse.preventDefault(event);
   };
 
   <div className=Styles.wrapper>
-    <div className=Styles.icon> Styles.searchIcon </div>
-    <input
-      name="searchCountry"
-      value
-      onChange
-      onClick
-      placeholder
-      className=Styles.input
-    />
+    <div className=Styles.iconInputWrapper>
+      <div className=Styles.icon> Styles.searchIcon </div>
+      <input
+        name="searchCountry"
+        value
+        onChange
+        onClick
+        placeholder
+        className=Styles.input
+      />
+    </div>
   </div>;
 };

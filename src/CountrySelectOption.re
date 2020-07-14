@@ -1,45 +1,68 @@
 module Styles = {
   open Css;
 
+  module Const = CountrySelectConstants.Style;
+
   let paragraph =
     style([
+      boxSizing(borderBox),
       margin(px(0)),
       marginLeft(px(8)),
-      fontSize(px(14)),
-      fontFamily(`custom("Arial")),
+      fontSize(Const.fontSizePx),
+      fontFamily(Const.fontFamily),
+      maxWidth(px(180)),
     ]);
+
+  let focusStyle = [
+    backgroundColor(Const.Color.menuItemFocused),
+    borderWidth(px(0)),
+    outlineWidth(px(0)),
+  ];
 
   let wrapper =
     style([
       boxSizing(borderBox),
       display(flexBox),
-      width(px(230)),
-      height(px(26)),
+      width(px(Const.Size.menuWidthPx)),
+      minHeight(px(Const.Size.menuOptionHeightPx)),
       flexDirection(`row),
       alignItems(`center),
       paddingLeft(px(12)),
-      hover([backgroundColor(`rgb((245, 245, 245))), cursor(pointer)]),
+      hover([backgroundColor(Const.Color.hover), cursor(pointer)]),
+      focus(focusStyle),
     ]);
 
-  let focused = style([backgroundColor(`rgb((235, 235, 235)))]);
+  let focused = style(focusStyle);
 
   let selected = style([fontWeight(`bold)]);
 };
 
 open Styles;
 
-let component: ReactSelect.CustomComponent.t =
-  ({isFocused, isSelected, innerProps, innerRef, value, label}) => {
-    let wrapperClass =
-      switch (isFocused, isSelected) {
-      | (true, true) => {j|$(wrapper) $(focused) $(selected)|j}
-      | (false, true) => {j|$(wrapper) $(selected)|j}
-      | (true, false) => {j|$(wrapper) $(focused)|j}
-      | (false, false) => Styles.wrapper
-      };
+[@react.component]
+let make =
+    (
+      ~isFocused: bool,
+      ~isSelected: bool,
+      ~value: string,
+      ~label: string,
+      ~onClick: unit => unit,
+    ) => {
+  let wrapperClass =
+    switch (isFocused, isSelected) {
+    | (true, true) => {j|$(wrapper) $(focused) $(selected)|j}
+    | (false, true) => {j|$(wrapper) $(selected)|j}
+    | (true, false) => {j|$(wrapper) $(focused)|j}
+    | (false, false) => Styles.wrapper
+    };
 
-    <div ref=innerRef className=wrapperClass onClick={innerProps.onClick}>
-      <FlagIconCss countryCode=value />
-      <p className=Styles.paragraph> {React.string(label)} </p>
-    </div>;
+  let onClick = (event: ReactEvent.Mouse.t) => {
+    ReactEvent.Mouse.preventDefault(event);
+    onClick();
   };
+
+  <div tabIndex=0 className=wrapperClass onClick>
+    <FlagIconCss countryCode=value />
+    <p className=Styles.paragraph> {React.string(label)} </p>
+  </div>;
+};
