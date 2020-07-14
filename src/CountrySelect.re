@@ -1,5 +1,4 @@
 open Belt;
-open Functions;
 open Utils.React;
 
 module Text = {
@@ -7,20 +6,48 @@ module Text = {
   let selectCountry = "Select Country";
 };
 
-let filterOptions =
-    (options: array(CountrySelectTypes.Option.t), filterString) => {
-  let searchSubstring = Utils.String.normalizeString(filterString);
-
-  let hasSubstring = Utils.String.hasSubstring(~search=searchSubstring);
-
-  if (Relude.String.isEmpty(searchSubstring)) {
-    options;
-  } else {
-    options->Array.keep(({value, label}) =>
-      value->hasSubstring || label->hasSubstring
-    );
-  };
+type state = {
+  options: option(array(CountrySelectTypes.Option.t)),
+  selectedCountry: option(CountrySelectTypes.Option.t),
+  filter: string,
+  menuOpened: bool,
 };
+
+let initialState = {
+  options: None,
+  selectedCountry: None,
+  filter: "",
+  menuOpened: false,
+};
+
+type action =
+  | FetchCountriesSuccess(array(CountrySelectTypes.Option.t))
+  | FetchCountriesFailure(ReludeFetch.Error.t(string))
+  | SetCountry(option(CountrySelectTypes.Option.t))
+  | ChangeCountry(CountrySelectTypes.Option.t, string => unit)
+  | SetFilter(string)
+  | ToggleMenu;
+
+let reducer =
+    (state: state, action: action): ReludeReact.Reducer.update(action, state) =>
+  switch (action) {
+  | FetchCountriesSuccess(countries) =>
+    Update({...state, options: Some(countries)})
+
+  | FetchCountriesFailure(error) =>
+    SideEffect(_ => Js.log(ReludeFetch.Error.show(e => e, error)))
+
+  | SetCountry(country) => Update({...state, selectedCountry: country})
+
+  | ChangeCountry(country, callback) =>
+    UpdateWithSideEffect(
+      {...state, selectedCountry: Some(country)},
+      _ => callback(country.value),
+    )
+
+  | SetFilter(filter) => Update({...state, filter})
+  | ToggleMenu => Update({...state, menuOpened: !state.menuOpened})
+  };
 
 module Functor = (Request: CountrySelectAPI.Request) => {
   [@react.component]
@@ -31,38 +58,21 @@ module Functor = (Request: CountrySelectAPI.Request) => {
         ~optionsUrl: option(string)=?,
         ~className: option(string)=?,
       ) => {
-    let className = Option.getWithDefault(className, "");
-
-    let (options, setOptions) = React.useState(() => None);
-
-    let (
-      selectedCountry: option(CountrySelectTypes.Option.t),
-      setSelectedCountry,
-    ) =
-      React.useState(() => None);
-
-    let (filterString, setFilterString) = React.useState(() => "");
-
-    let onChangeFilterString = str => setFilterString(const(str));
-
-    let (menuOpened, toggleMenu) = React.useState(() => false);
-
-    let toggleMenu = () => toggleMenu(opened => !opened);
+    let ({options, selectedCountry, filter, menuOpened}: state, send) =
+      ReludeReact.Reducer.useReducer(reducer, initialState);
 
     ReludeReact.Effect.useIOOnMount(
       Request.getCountriesIO(optionsUrl),
-      options => setOptions(const(Some(options))),
-      error => Js.log(ReludeFetch.Error.show(e => e, error)),
+      options => FetchCountriesSuccess(options)->send,
+      error => FetchCountriesFailure(error)->send,
     );
 
     React.useEffect2(
       () => {
         switch (options, country) {
         | (Some(options), Some(country)) =>
-          let mbSelectedValue =
-            options->Array.getBy(opt => opt.value == country);
-
-          setSelectedCountry(const(mbSelectedValue));
+          let mbCountry = options->Array.getBy(opt => opt.value == country);
+          SetCountry(mbCountry)->send;
         | _ => ()
         };
         None;
@@ -70,10 +80,15 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       (options, country),
     );
 
-    let onChangeCountry = (selectedCountry: CountrySelectTypes.Option.t) => {
-      onChange(selectedCountry.value);
-      setSelectedCountry(_ => Some(selectedCountry));
+    let toggleMenu = () => ToggleMenu->send;
+
+    let onChangeFilter = str => SetFilter(str)->send;
+
+    let onChangeCountry = (country: CountrySelectTypes.Option.t) => {
+      ChangeCountry(country, onChange)->send;
     };
+
+    let className = Option.getWithDefault(className, "");
 
     switch (options) {
     | None =>
@@ -83,7 +98,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
         opened=false
       />
     | Some(options) =>
-      let filteredOptions = filterOptions(options, filterString);
+      let filteredOptions = Utils.filterOptions(options, filter);
 
       <div className>
         <CountrySelectDropdownButton
@@ -97,8 +112,8 @@ module Functor = (Request: CountrySelectAPI.Request) => {
         {menuOpened
          &&& <CountrySelectMenu.Wrapper>
                <CountrySelectSearchFilter
-                 value=filterString
-                 onChange=onChangeFilterString
+                 value=filter
+                 onChange=onChangeFilter
                />
                <CountrySelectMenu.CountryList
                  options=filteredOptions

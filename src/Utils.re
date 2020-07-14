@@ -9,6 +9,21 @@ module String = {
     Relude.String.toLowerCase(string) |> Relude.String.contains(~search);
 };
 
+let filterOptions =
+    (options: array(CountrySelectTypes.Option.t), filter: string) => {
+  let searchSubstring = String.normalizeString(filter);
+
+  let hasSubstring = String.hasSubstring(~search=searchSubstring);
+
+  if (Relude.String.isEmpty(searchSubstring)) {
+    options;
+  } else {
+    options->Belt.Array.keep(({value, label}) =>
+      value->hasSubstring || label->hasSubstring
+    );
+  };
+};
+
 module React = {
   let (&&&) = (condition: bool, element: React.element) =>
     if (condition) {element} else {React.null};
