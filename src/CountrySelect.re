@@ -227,6 +227,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
                   />
                   <CountrySelectMenu.CountryList
                     options=filteredOptions
+                    selectedCountry
                     onChangeCountry
                     onFocus=onFocusList
                   />
