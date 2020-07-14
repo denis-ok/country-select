@@ -10,8 +10,14 @@ module Styles = {
       marginLeft(px(8)),
       fontSize(Const.fontSizePx),
       fontFamily(Const.fontFamily),
-      maxWidth(px(180))
+      maxWidth(px(180)),
     ]);
+
+  let focusStyle = [
+    backgroundColor(Const.Color.menuItemFocused),
+    borderWidth(px(0)),
+    outlineWidth(px(0)),
+  ];
 
   let wrapper =
     style([
@@ -23,9 +29,10 @@ module Styles = {
       alignItems(`center),
       paddingLeft(px(12)),
       hover([backgroundColor(Const.Color.hover), cursor(pointer)]),
+      focus(focusStyle),
     ]);
 
-  let focused = style([backgroundColor(Const.Color.menuItemFocused)]);
+  let focused = style(focusStyle);
 
   let selected = style([fontWeight(`bold)]);
 };
@@ -54,7 +61,7 @@ let make =
     onClick();
   };
 
-  <div className=wrapperClass onClick>
+  <div tabIndex=0 className=wrapperClass onClick>
     <FlagIconCss countryCode=value />
     <p className=Styles.paragraph> {React.string(label)} </p>
   </div>;

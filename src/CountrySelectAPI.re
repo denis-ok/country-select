@@ -3,7 +3,7 @@ module D = Decode.AsResult.OfParseError;
 module Response = {
   let ((<$>), (<*>)) = D.(map, apply);
 
-  let make = (label, value): ReactSelect.Option.t => {label, value};
+  let make = (label, value): CountrySelectTypes.Option.t => {label, value};
 
   let decodeOne =
     make <$> D.field("label", D.string) <*> D.field("value", D.string);
@@ -23,7 +23,10 @@ module Response = {
 module type Request = {
   let getCountriesIO:
     option(string) =>
-    Relude.IO.t(array(ReactSelect.Option.t), ReludeFetch.Error.t(string));
+    Relude.IO.t(
+      array(CountrySelectTypes.Option.t),
+      ReludeFetch.Error.t(string),
+    );
 };
 
 module Request: Request = {
