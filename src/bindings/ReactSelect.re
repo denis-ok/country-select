@@ -23,6 +23,7 @@ module CustomComponent = {
       value: string,
       isSelected: bool,
       isFocused: bool,
+      children: React.element,
     };
   };
 
@@ -30,9 +31,18 @@ module CustomComponent = {
 };
 
 module Components = {
+  // Every value of type below obviously must be option(CustomComponent.t)
+  // Unfortunately, passing None just broke everything with an exception
+  // Probably because we have { Menu: undefined } object instead of ommited key
+  // Mayybe this can be avoided with usage of Js.Dict API
+  // Or some kind of util that rejects reduntand keys
   type t = {
     [@bs.as "Option"]
     option: CustomComponent.t,
+    [@bs.as "Menu"]
+    menu: CustomComponent.t,
+    [@bs.as "MenuList"]
+    menuList: CustomComponent.t,
   };
 };
 
@@ -46,6 +56,12 @@ module DefaultComponents = {
 
   [@bs.get] external _option: t => Component.t = "Option";
   let option = components->_option;
+
+  [@bs.get] external _menu: t => Component.t = "Menu";
+  let menu = components->_menu;
+
+  [@bs.get] external _menuList: t => Component.t = "MenuList";
+  let menuList = components->_menuList;
 };
 
 [@react.component] [@bs.module "react-select"]
@@ -61,8 +77,11 @@ external make:
     ~menuIsOpen: bool=?,
     ~name: string=?,
     ~onBlur: ReactEvent.Focus.t => unit=?,
-    ~onFocus: ReactEvent.Focus.t => unit=?,
     ~onChange: (Option.t, string) => unit=?,
+    ~onFocus: ReactEvent.Focus.t => unit=?,
+    ~onKeyDown: ReactEvent.Keyboard.t => unit=?,
+    ~onMenuOpen: unit => unit=?,
+    ~onMenuClose: unit => unit=?,
     ~options: array(Option.t),
     ~value: Option.t=?,
     ~placeholder: React.element=?
