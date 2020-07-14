@@ -48,7 +48,7 @@ module List = {
 
   [@react.component]
   let make = (~children: React.element) => {
-    <div className=Styles.className> children </div>;
+    <div className=Styles.className role="listbox"> children </div>;
   };
 };
 

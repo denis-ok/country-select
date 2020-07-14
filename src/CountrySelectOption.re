@@ -65,7 +65,8 @@ let make =
     tabIndex=0
     className=wrapperClass
     onClick
-    onFocus={Functions.omit(onFocus)}>
+    onFocus={Functions.omit(onFocus)}
+    role="option">
     <FlagIconCss countryCode=value />
     <p className=Styles.paragraph> {React.string(label)} </p>
   </div>;

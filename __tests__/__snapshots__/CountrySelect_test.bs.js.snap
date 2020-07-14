@@ -1,11 +1,178 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`CountrySelect List has role attribute 1`] = `
+<div
+  class="css-j0zze5"
+  role="listbox"
+>
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-ar"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      Argentina
+    </p>
+  </div>
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-bd"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      Bangladesh
+    </p>
+  </div>
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-cl"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      Chile
+    </p>
+  </div>
+</div>
+`;
+
+exports[`CountrySelect List with 7 items has role attribute 1`] = `
+<div
+  class="css-j0zze5"
+  role="listbox"
+>
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-ar"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      Argentina
+    </p>
+  </div>
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-bd"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      Bangladesh
+    </p>
+  </div>
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-cl"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      Chile
+    </p>
+  </div>
+</div>
+`;
+
 exports[`CountrySelect Loading placeholder 1`] = `
 <div
   class="css-mp2u"
 >
   Loading...
 </div>
+`;
+
+exports[`CountrySelect Open menu and select country 1`] = `undefined`;
+
+exports[`CountrySelect Open menu by click 1`] = `
+<input
+  class="css-oop385"
+  name="searchCountry"
+  placeholder="Search"
+  value=""
+/>
+`;
+
+exports[`CountrySelect Options have role attribute 1`] = `
+Array [
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-ar"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      Argentina
+    </p>
+  </div>,
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-bd"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      Bangladesh
+    </p>
+  </div>,
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-cl"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      Chile
+    </p>
+  </div>,
+]
 `;
 
 exports[`CountrySelect Pass country prop 1`] = `
@@ -21,6 +188,72 @@ Object {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
+      <div
+        class=""
+      >
+        <button
+          class="css-mq3a33"
+        >
+          <div
+            class="css-mp2u"
+          >
+            Loading...
+          </div>
+          <svg
+            height="5px"
+            transform=""
+            version="1.1"
+            viewBox="0 0 8 5"
+            width="8px"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+          >
+            <g
+              fill="none"
+              fill-rule="evenodd"
+              id="Landing"
+              stroke="none"
+              stroke-width="1"
+            >
+              <g
+                id="Artboard"
+                transform="translate(-286.000000, -197.000000)"
+              >
+                <path
+                  d="M300.998894,186.5 C301.689815,186.5 302.315313,186.780058 302.767917,187.233691 C303.220426,187.687229 303.5,188.314156 303.5,189.00793 L303.5,189.00793 L303.5,208.99207 C303.5,209.685536 303.221091,210.313478 302.76798,210.767619 C302.316298,211.220328 301.69164,211.5 300.998894,211.5 L300.998894,211.5 L188.001106,211.5 C187.310185,211.5 186.684687,211.219942 186.232083,210.766309 C185.779574,210.312771 185.5,209.685844 185.5,208.99207 L185.5,208.99207 L185.5,189.00793 C185.5,188.314464 185.778909,187.686522 186.23202,187.232381 C186.683702,186.779672 187.30836,186.5 188.001106,186.5 L188.001106,186.5 Z"
+                  fill="#FFFFFF"
+                  id="bg"
+                  stroke="#000000"
+                  stroke-opacity="0.2"
+                />
+                <g
+                  id="Group"
+                  transform="translate(286.000000, 195.000000)"
+                >
+                  <rect
+                    height="8"
+                    id="box"
+                    width="8"
+                    x="0"
+                    y="0"
+                  />
+                  <polygon
+                    fill="#333333"
+                    id="icon"
+                    points="0 2 8 2 4 7"
+                  />
+                </g>
+              </g>
+            </g>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class=""
+    >
       <button
         class="css-mq3a33"
       >
@@ -78,64 +311,6 @@ Object {
         </svg>
       </button>
     </div>
-  </body>,
-  "container": <div>
-    <button
-      class="css-mq3a33"
-    >
-      <div
-        class="css-mp2u"
-      >
-        Loading...
-      </div>
-      <svg
-        height="5px"
-        transform=""
-        version="1.1"
-        viewBox="0 0 8 5"
-        width="8px"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-      >
-        <g
-          fill="none"
-          fill-rule="evenodd"
-          id="Landing"
-          stroke="none"
-          stroke-width="1"
-        >
-          <g
-            id="Artboard"
-            transform="translate(-286.000000, -197.000000)"
-          >
-            <path
-              d="M300.998894,186.5 C301.689815,186.5 302.315313,186.780058 302.767917,187.233691 C303.220426,187.687229 303.5,188.314156 303.5,189.00793 L303.5,189.00793 L303.5,208.99207 C303.5,209.685536 303.221091,210.313478 302.76798,210.767619 C302.316298,211.220328 301.69164,211.5 300.998894,211.5 L300.998894,211.5 L188.001106,211.5 C187.310185,211.5 186.684687,211.219942 186.232083,210.766309 C185.779574,210.312771 185.5,209.685844 185.5,208.99207 L185.5,208.99207 L185.5,189.00793 C185.5,188.314464 185.778909,187.686522 186.23202,187.232381 C186.683702,186.779672 187.30836,186.5 188.001106,186.5 L188.001106,186.5 Z"
-              fill="#FFFFFF"
-              id="bg"
-              stroke="#000000"
-              stroke-opacity="0.2"
-            />
-            <g
-              id="Group"
-              transform="translate(286.000000, 195.000000)"
-            >
-              <rect
-                height="8"
-                id="box"
-                width="8"
-                x="0"
-                y="0"
-              />
-              <polygon
-                fill="#333333"
-                id="icon"
-                points="0 2 8 2 4 7"
-              />
-            </g>
-          </g>
-        </g>
-      </svg>
-    </button>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],
