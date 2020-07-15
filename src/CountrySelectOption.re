@@ -48,6 +48,8 @@ let make =
       ~onClick: unit => unit,
       ~onFocus: unit => unit,
     ) => {
+  let _ = value;
+
   let wrapperClass =
     switch (isFocused, isSelected) {
     | (true, true) => {j|$(wrapper) $(focused) $(selected)|j}
