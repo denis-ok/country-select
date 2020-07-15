@@ -2,22 +2,11 @@ open Belt;
 open Utils.Infix;
 
 module Types = CountrySelectTypes;
+module Styles = CountrySelectStyles;
 
 module Text = {
   let loading = "Loading...";
   let selectCountry = "Select Country";
-};
-
-module Styles = {
-  open Css;
-
-  let root =
-    style([
-      boxSizing(borderBox),
-      position(relative),
-      width(`fitContent),
-      maxWidth(px(CountrySelectConstants.Style.Size.menuWidthPx)),
-    ]);
 };
 
 type state = {
@@ -109,16 +98,16 @@ let reducer =
   | FocusFilter =>
     SideEffect(({state}) => Utils.ReactDom.focusOptRef(state.filterRef))
 
-  | FocusList(focusIndex) =>
+  | FocusList(focusedIndex) =>
     Update({
       ...state,
-      focusedSection: Some(Types.Section.Options(focusIndex)),
+      focusedSection: Some(Types.Section.Options(focusedIndex)),
     })
 
   | NoOp => NoUpdate
   };
 
-module Functor = (Request: CountrySelectAPI.Request) => {
+module FunctorComponent = (Request: CountrySelectAPI.Request) => {
   [@react.component]
   let make =
       (
@@ -135,7 +124,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
 
     let options = options->Option.map(Utils.filterOptions(_, filter));
 
-    let focusIndex =
+    let focusedIndex =
       switch (focusedSection) {
       | Some(Options(index)) => Some(index)
       | Some(Button) => None
@@ -173,17 +162,12 @@ module Functor = (Request: CountrySelectAPI.Request) => {
 
     let onChangeFilter = str => SetFilter(str)->send;
 
-    let onChangeCountry = (country: Types.Option.t) => {
+    let onChangeCountry = (country: Types.Option.t) =>
       SelectCountry(country, onChange)->send;
-    };
 
-    let onFocusButton = () => {
-      SetFocusedSection(Types.Section.Button)->send;
-    };
+    let onFocusButton = () => SetFocusedSection(Button)->send;
 
-    let onFocusFilter = () => {
-      SetFocusedSection(Types.Section.Filter)->send;
-    };
+    let onFocusFilter = () => SetFocusedSection(Filter)->send;
 
     let onDropdownKeyDown = (event: ReactEvent.Keyboard.t) => {
       let key = Utils.ReactDom.keyFromEvent(event);
@@ -219,7 +203,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
 
     let onOptionsKeyDown =
         (
-          focusIndex: int,
+          focusedIndex: int,
           options: array(Types.Option.t),
           event: ReactEvent.Keyboard.t,
         ) => {
@@ -227,14 +211,14 @@ module Functor = (Request: CountrySelectAPI.Request) => {
 
       let action =
         switch (key) {
-        | ArrowUp when focusIndex == 0 => FocusFilter
-        | ArrowUp => FocusList(focusIndex - 1)
+        | ArrowUp when focusedIndex == 0 => FocusFilter
+        | ArrowUp => FocusList(focusedIndex - 1)
         | ArrowDown =>
           let maxIndex = Array.size(options) - 1;
-          focusIndex == maxIndex ? NoOp : FocusList(focusIndex + 1);
+          focusedIndex == maxIndex ? NoOp : FocusList(focusedIndex + 1);
         | Space
         | Enter =>
-          switch (options[focusIndex]) {
+          switch (options[focusedIndex]) {
           | Some(country) => SelectCountry(country, onChange)
           | None => NoOp
           }
@@ -288,7 +272,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
              setRef={ref_ => send(SetButtonRef(ref_))}
            />
            {menuOpened
-            &&& <CountrySelectMenu.Wrapper>
+            &&& <div className=Styles.menuWrapper>
                   <CountrySelectSearchFilter
                     value=filter
                     onChange=onChangeFilter
@@ -299,13 +283,13 @@ module Functor = (Request: CountrySelectAPI.Request) => {
                     options
                     selectedCountry
                     onChangeCountry
-                    focusIndex
+                    focusedIndex
                   />
-                </CountrySelectMenu.Wrapper>}
+                </div>}
          </>
        }}
     </div>;
   };
 };
 
-include Functor(CountrySelectAPI.Request);
+include FunctorComponent(CountrySelectAPI.Request);

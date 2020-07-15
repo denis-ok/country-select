@@ -1,40 +1,5 @@
 module Const = CountrySelectConstants.Style;
 
-module Wrapper = {
-  module Styles = {
-    open Css;
-
-    let className =
-      style([
-        position(absolute),
-        zIndex(1000),
-        boxSizing(borderBox),
-        display(flexBox),
-        flexDirection(column),
-        width(px(Const.Size.menuWidthPx)),
-        maxHeight(px(Const.Size.menuHeightPx)),
-        borderStyle(`solid),
-        borderColor(Const.Color.menuBorder),
-        borderRadius(px(2)),
-        borderWidth(px(1)),
-        marginTop(px(1)),
-        boxShadow(
-          Shadow.box(
-            ~x=px(0),
-            ~y=px(1),
-            ~blur=px(3),
-            `rgba((0, 0, 0, 0.08)),
-          ),
-        ),
-      ]);
-  };
-
-  [@react.component]
-  let make = (~children: React.element) => {
-    <div className=Styles.className> children </div>;
-  };
-};
-
 module ListItems = {
   module Styles = {
     open Css;
@@ -76,7 +41,7 @@ module CountryList = {
         ~options: array(CountrySelectTypes.Option.t),
         ~onChangeCountry: CountrySelectTypes.Option.t => unit,
         ~selectedCountry: option(CountrySelectTypes.Option.t),
-        ~focusIndex: option(int),
+        ~focusedIndex: option(int),
       ) => {
     let elements =
       options->Belt.Array.mapWithIndex(
@@ -86,7 +51,7 @@ module CountryList = {
           value
           label
           isFocused=Belt.Option.(
-            map(focusIndex, idx => idx == index)->getWithDefault(false)
+            map(focusedIndex, idx => idx == index)->getWithDefault(false)
           )
           isSelected=Belt.Option.(
             map(selectedCountry, c => c.value == value)->getWithDefault(false)
