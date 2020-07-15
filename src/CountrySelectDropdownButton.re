@@ -74,13 +74,29 @@ module Styles = {
 };
 
 [@react.component]
-let make = (~text: string, ~opened: bool, ~onClick: unit => unit) => {
+let make =
+    (
+      ~text: string,
+      ~opened: bool,
+      ~onClick: unit => unit,
+      ~onFocus: unit => unit,
+      ~setRef: React.ref(Js.Nullable.t(Dom.element)) => unit,
+    ) => {
   let onClick = (event: ReactEvent.Mouse.t) => {
     ReactEvent.Mouse.preventDefault(event);
     onClick();
   };
 
-  <button className=Styles.button onClick>
+  let buttonRef: React.ref(Js.Nullable.t(Dom.element)) =
+    React.useRef(Js.Nullable.null);
+
+  ReludeReact.Effect.useOnMount(() => setRef(buttonRef));
+
+  <button
+    ref={ReactDOMRe.Ref.domRef(buttonRef)}
+    className=Styles.button
+    onClick
+    onFocus={Functions.omit(onFocus)}>
     <div className=Styles.text> {React.string(text)} </div>
     {Styles.iconSvg(opened)}
   </button>;

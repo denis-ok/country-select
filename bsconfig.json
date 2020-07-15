@@ -38,7 +38,8 @@
   ],
   "bs-dev-dependencies": ["@glennsl/bs-jest", "bs-react-testing-library"],
   "warnings": {
-    "error": "+101"
+    "number": "+A-4-9-20",
+    "error": "+A"
   },
   "suffix": ".bs.js",
   "refmt": 3

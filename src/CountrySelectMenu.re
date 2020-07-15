@@ -48,7 +48,7 @@ module List = {
 
   [@react.component]
   let make = (~children: React.element) => {
-    <div className=Styles.className> children </div>;
+    <div className=Styles.className role="listbox"> children </div>;
   };
 };
 
@@ -72,17 +72,25 @@ module CountryList = {
       (
         ~options: array(CountrySelectTypes.Option.t),
         ~onChangeCountry: CountrySelectTypes.Option.t => unit,
+        ~selectedCountry: option(CountrySelectTypes.Option.t),
+        ~onFocus: unit => unit,
+        ~focusIndex: option(int),
       ) => {
     let elements =
-      options->Belt.Array.map(
-        ({value, label} as option: CountrySelectTypes.Option.t) =>
+      options->Belt.Array.mapWithIndex(
+        (index, {value, label} as option: CountrySelectTypes.Option.t) =>
         <CountrySelectOption
           key=value
           value
           label
-          isFocused=false
-          isSelected=false
+          isFocused=Belt.Option.(
+            map(focusIndex, idx => idx == index)->getWithDefault(false)
+          )
+          isSelected=Belt.Option.(
+            map(selectedCountry, c => c.value == value)->getWithDefault(false)
+          )
           onClick={() => onChangeCountry(option)}
+          onFocus
         />
       );
 

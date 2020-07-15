@@ -46,6 +46,7 @@ let make =
       ~value: string,
       ~label: string,
       ~onClick: unit => unit,
+      ~onFocus: unit => unit,
     ) => {
   let wrapperClass =
     switch (isFocused, isSelected) {
@@ -60,7 +61,30 @@ let make =
     onClick();
   };
 
-  <div tabIndex=0 className=wrapperClass onClick>
+  let onFocus = event => {
+    ReactEvent.Focus.preventDefault(event);
+    ReactEvent.Focus.stopPropagation(event);
+    onFocus();
+  };
+
+  let rootRef: React.ref(Js.Nullable.t(Dom.element)) =
+    React.useRef(Js.Nullable.null);
+
+  React.useEffect0(() => {
+    if (isFocused) {
+      Utils.ReactDom.focusRef(rootRef);
+    };
+
+    None;
+  });
+
+  <div
+    ref={ReactDOM.Ref.domRef(rootRef)}
+    tabIndex=0
+    className=wrapperClass
+    onClick
+    onFocus
+    role="option">
     <FlagIconCss countryCode=value />
     <p className=Styles.paragraph> {React.string(label)} </p>
   </div>;
