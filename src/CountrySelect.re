@@ -175,12 +175,14 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
       let action =
         switch (key) {
         | ArrowUp => ToggleMenu
-        | ArrowDown when !menuOpened => ToggleMenu
-        | ArrowDown when menuOpened => FocusFilter
+        | ArrowDown => menuOpened ? FocusFilter : ToggleMenu
         | Space
         | Enter => ToggleMenu
-        | Tab => Blur
-        | _ => NoOp
+        | Tab
+        | Escape => Blur
+        | PageUp
+        | PageDown
+        | Unsupported => NoOp
         };
 
       send(action);
@@ -195,7 +197,11 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
         | ArrowDown
         | Enter
         | Tab => FocusList(0)
-        | _ => NoOp
+        | Escape => Blur
+        | PageUp
+        | PageDown
+        | Space
+        | Unsupported => NoOp
         };
 
       send(action);
@@ -225,7 +231,8 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
         | Tab => FocusFilter
         | PageUp
         | PageDown => NoOp
-        | _ => NoOp
+        | Escape => Blur
+        | Unsupported => NoOp
         };
 
       send(action);
