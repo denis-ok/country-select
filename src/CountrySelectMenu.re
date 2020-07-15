@@ -6,6 +6,7 @@ module Wrapper = {
 
     let className =
       style([
+        position(absolute),
         boxSizing(borderBox),
         display(flexBox),
         flexDirection(column),
@@ -15,6 +16,7 @@ module Wrapper = {
         borderColor(Const.Color.menuBorder),
         borderRadius(px(2)),
         borderWidth(px(1)),
+        marginTop(px(1)),
         boxShadow(
           Shadow.box(
             ~x=px(0),
@@ -32,7 +34,7 @@ module Wrapper = {
   };
 };
 
-module List = {
+module ListItems = {
   module Styles = {
     open Css;
 
@@ -52,11 +54,11 @@ module List = {
   };
 };
 
-module ListReactWindow = {
+module ListItemsReactWindow = {
   [@react.component]
   let make = (~children: array(React.element)) => {
     <ReactWindow.FixedSizeList
-      className=List.Styles.className
+      className=ListItems.Styles.className
       height=Const.Size.menuHeightPx
       width=Const.Size.menuWidthPx
       itemSize=Const.Size.menuOptionHeightPx
@@ -95,9 +97,9 @@ module CountryList = {
       );
 
     if (Array.length(options) <= 6) {
-      <List> {React.array(elements)} </List>;
+      <ListItems> {React.array(elements)} </ListItems>;
     } else {
-      <ListReactWindow> elements </ListReactWindow>;
+      <ListItemsReactWindow> elements </ListItemsReactWindow>;
     };
   };
 };

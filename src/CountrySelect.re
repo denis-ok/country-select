@@ -14,7 +14,9 @@ module Styles = {
   let root =
     style([
       boxSizing(borderBox),
-      width(px(CountrySelectConstants.Style.Size.menuWidthPx)),
+      position(relative),
+      width(`fitContent),
+      maxWidth(px(CountrySelectConstants.Style.Size.menuWidthPx)),
     ]);
 };
 
