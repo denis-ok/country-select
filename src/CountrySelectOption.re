@@ -61,12 +61,15 @@ let make =
     onClick();
   };
 
-  <div
-    tabIndex=0
-    className=wrapperClass
-    onClick
-    onFocus={Functions.omit(onFocus)}
-    role="option">
+  let onFocus = event => {
+    ReactEvent.Focus.preventDefault(event);
+    let target = ReactEvent.Focus.target(event);
+    onFocus();
+
+    Js.log2("Target:", target);
+  };
+
+  <div tabIndex=0 className=wrapperClass onClick onFocus role="option">
     <FlagIconCss countryCode=value />
     <p className=Styles.paragraph> {React.string(label)} </p>
   </div>;

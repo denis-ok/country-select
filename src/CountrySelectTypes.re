@@ -2,7 +2,7 @@ module Option = {
   type t = ReactSelect.Option.t;
 };
 
-module Element = {
+module Section = {
   type t =
     | Button
     | Filter

@@ -23,7 +23,7 @@ type state = {
   selectedCountry: option(Types.Option.t),
   filter: string,
   menuOpened: bool,
-  focusedElement: option(Types.Element.t),
+  focusedSection: option(Types.Section.t),
   filterRef: option(React.ref(Js.Nullable.t(Dom.element))),
   buttonRef: option(React.ref(Js.Nullable.t(Dom.element))),
 };
@@ -33,7 +33,7 @@ let initialState = {
   selectedCountry: None,
   filter: "",
   menuOpened: false,
-  focusedElement: None,
+  focusedSection: None,
   filterRef: None,
   buttonRef: None,
 };
@@ -44,7 +44,7 @@ type action =
   | SetCountry(option(Types.Option.t))
   | ChangeCountry(Types.Option.t, string => unit)
   | SetFilter(string)
-  | SetFocusedElement(Types.Element.t)
+  | SetFocusedSection(Types.Section.t)
   | SetFilterRef(React.ref(Js.Nullable.t(Dom.element)))
   | SetButtonRef(React.ref(Js.Nullable.t(Dom.element)))
   | ToggleMenu
@@ -78,14 +78,14 @@ let reducer =
 
   | ToggleMenu => Update({...state, menuOpened: !state.menuOpened})
 
-  | SetFocusedElement(element) =>
-    Update({...state, focusedElement: Some(element)})
+  | SetFocusedSection(element) =>
+    Update({...state, focusedSection: Some(element)})
 
   | SetFilterRef(ref_) => Update({...state, filterRef: Some(ref_)})
 
   | SetButtonRef(ref_) => Update({...state, buttonRef: Some(ref_)})
 
-  | Blur => Update({...state, focusedElement: None, menuOpened: false})
+  | Blur => Update({...state, focusedSection: None, menuOpened: false})
 
   | FocusButton =>
     SideEffect(({state}) => Utils.ReactDom.focusOptRef(state.buttonRef))
@@ -110,7 +110,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
         ~className: option(string)=?,
       ) => {
     let (
-      {options, selectedCountry, filter, menuOpened, focusedElement}: state,
+      {options, selectedCountry, filter, menuOpened, focusedSection}: state,
       send,
     ) =
       ReludeReact.Reducer.useReducer(reducer, initialState);
@@ -147,24 +147,24 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       ChangeCountry(country, onChange)->send;
 
     let onFocusButton = () => {
-      SetFocusedElement(Types.Element.Button)->send;
+      SetFocusedSection(Types.Section.Button)->send;
     };
 
     let onFocusFilter = () => {
-      SetFocusedElement(Types.Element.Filter)->send;
+      SetFocusedSection(Types.Section.Filter)->send;
     };
 
     let onFocusList = () => {
-      switch (focusedElement) {
+      switch (focusedSection) {
       | Some(Options) => ()
-      | _ => SetFocusedElement(Types.Element.Options)->send
+      | _ => SetFocusedSection(Types.Section.Options)->send
       };
     };
 
     let onKeyDown = (event: ReactEvent.Keyboard.t) => {
       let action: action =
-        Types.Element.(
-          switch (focusedElement) {
+        Types.Section.(
+          switch (focusedSection) {
           | None => NoOp
           | Some(element) =>
             let key = Utils.ReactDom.keyFromEvent(event);
