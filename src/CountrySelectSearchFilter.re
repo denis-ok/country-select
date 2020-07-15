@@ -75,7 +75,14 @@ module Styles = {
       </g>
     </svg>;
 
-  let inputFocus = focus([borderColor(Const.Color.focus)]);
+  let inputFocus =
+    focus([
+      outlineStyle(`none),
+      borderWidth(px(1)),
+      borderTopLeftRadius(px(2)),
+      borderTopRightRadius(px(2)),
+      borderColor(Const.Color.focus),
+    ]);
 
   let input =
     style([

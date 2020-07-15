@@ -118,7 +118,7 @@ exports[`CountrySelect Open menu and select country 1`] = `undefined`;
 
 exports[`CountrySelect Open menu by click 1`] = `
 <input
-  class="css-oop385"
+  class="css-fo9vm"
   name="searchCountry"
   placeholder="Search"
   value=""
@@ -189,10 +189,10 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-mp3wli"
+        class="css-tzx47j"
       >
         <button
-          class="css-mq3a33"
+          class="css-jpvxsl"
         >
           <div
             class="css-mp2u"
@@ -252,10 +252,10 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="css-mp3wli"
+      class="css-tzx47j"
     >
       <button
-        class="css-mq3a33"
+        class="css-jpvxsl"
       >
         <div
           class="css-mp2u"

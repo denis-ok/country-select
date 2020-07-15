@@ -38,7 +38,8 @@ module Styles = {
   let buttonHover =
     hover([cursor(pointer), backgroundColor(Const.Color.hover)]);
 
-  let buttonFocus = focus([borderColor(Const.Color.focus)]);
+  let buttonFocus =
+    focus([outlineStyle(`none), borderColor(Const.Color.focus)]);
 
   let button =
     style([
@@ -57,7 +58,6 @@ module Styles = {
       borderWidth(px(1)),
       fontSize(Const.fontSizePx),
       fontFamily(Const.fontFamily),
-      focus([outlineStyle(`none)]),
       backgroundColor(white),
       buttonHover,
       buttonFocus,

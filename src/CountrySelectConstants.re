@@ -18,7 +18,7 @@ module Style = {
 
     let hover = `rgb((245, 245, 245));
 
-    let focus = `hex("#3b78e7");
+    let focus = `hex("3b78e7");
   };
 
   let fontSizePx = `px(14);
