@@ -7,6 +7,7 @@ module Wrapper = {
     let className =
       style([
         position(absolute),
+        zIndex(1000),
         boxSizing(borderBox),
         display(flexBox),
         flexDirection(column),
@@ -75,7 +76,6 @@ module CountryList = {
         ~options: array(CountrySelectTypes.Option.t),
         ~onChangeCountry: CountrySelectTypes.Option.t => unit,
         ~selectedCountry: option(CountrySelectTypes.Option.t),
-        ~onFocus: unit => unit,
         ~focusIndex: option(int),
       ) => {
     let elements =
@@ -92,7 +92,6 @@ module CountryList = {
             map(selectedCountry, c => c.value == value)->getWithDefault(false)
           )
           onClick={() => onChangeCountry(option)}
-          onFocus
         />
       );
 

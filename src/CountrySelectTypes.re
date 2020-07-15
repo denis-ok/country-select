@@ -17,6 +17,8 @@ module KeyboardButton = {
     | Escape
     | Tab
     | Space
+    | PageUp
+    | PageDown
     | Unsupported;
 
   let fromString =
@@ -26,6 +28,8 @@ module KeyboardButton = {
     | "Enter" => Enter
     | "Escape" => Escape
     | "Tab" => Tab
-    | "Space" => Space
+    | " " => Space
+    | "PageUp" => PageUp
+    | "PageDown" => PageDown
     | _ => Unsupported;
 };

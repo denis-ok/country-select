@@ -75,10 +75,24 @@ module ReactDom = {
     ->ignore;
   };
 
+  let blurRef = (inputRef: React.ref(Js.Nullable.t(Dom.element))) => {
+    inputRef.current
+    ->Js.Nullable.toOption
+    ->Belt.Option.map(ref => ReactDOMRe.domElementToObj(ref))
+    ->Belt.Option.map(node => Js.Global.setTimeout(() => node##blur(), 10))
+    ->ignore;
+  };
+
   let focusOptRef = ref_ =>
     switch (ref_) {
     | None => ()
     | Some(ref_) => focusRef(ref_)
+    };
+
+  let blurOptRef = ref_ =>
+    switch (ref_) {
+    | None => ()
+    | Some(ref_) => blurRef(ref_)
     };
 
   let extractDomElementFromRef = (reactRef: React.ref(Js.Nullable.t('a))) =>
