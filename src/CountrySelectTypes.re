@@ -6,7 +6,7 @@ module Section = {
   type t =
     | Button
     | Filter
-    | Options;
+    | Options(int);
 };
 
 module KeyboardButton = {

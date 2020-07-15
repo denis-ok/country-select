@@ -51,9 +51,7 @@ type action =
   | Blur
   | FocusButton
   | FocusFilter
-  | FocusList
-  | NextItem
-  | PrevItem
+  | FocusList(int)
   | SelectItem
   | NoOp;
 
@@ -93,9 +91,12 @@ let reducer =
   | FocusFilter =>
     SideEffect(({state}) => Utils.ReactDom.focusOptRef(state.filterRef))
 
-  | FocusList
-  | NextItem
-  | PrevItem
+  | FocusList(focusIndex) =>
+    Update({
+      ...state,
+      focusedSection: Some(Types.Section.Options(focusIndex)),
+    })
+
   | SelectItem
   | NoOp => NoUpdate
   };
@@ -114,6 +115,16 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       send,
     ) =
       ReludeReact.Reducer.useReducer(reducer, initialState);
+
+    let options = options->Option.map(Utils.filterOptions(_, filter));
+
+    let focusIndex =
+      switch (focusedSection) {
+      | Some(Options(index)) => Some(index)
+      | Some(Button) => None
+      | Some(Filter) => None
+      | None => None
+      };
 
     ReludeReact.Effect.useIOOnMount(
       Request.getCountriesIO(optionsUrl),
@@ -156,8 +167,8 @@ module Functor = (Request: CountrySelectAPI.Request) => {
 
     let onFocusList = () => {
       switch (focusedSection) {
-      | Some(Options) => ()
-      | _ => SetFocusedSection(Types.Section.Options)->send
+      | Some(Options(_)) => ()
+      | _ => SetFocusedSection(Types.Section.Options(0))->send
       };
     };
 
@@ -168,6 +179,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
           | None => NoOp
           | Some(element) =>
             let key = Utils.ReactDom.keyFromEvent(event);
+
             switch (element, key) {
             | (_, Unsupported) => NoOp
             | (_, Escape) => Blur
@@ -176,13 +188,29 @@ module Functor = (Request: CountrySelectAPI.Request) => {
             | (Button, ArrowDown) when menuOpened => FocusFilter
             | (Button, Tab) when !menuOpened => ToggleMenu
             | (Filter, ArrowUp) => FocusButton
-            | (Filter, ArrowDown) => FocusList
-            | (Filter, Tab) => FocusList
-            | (Options, ArrowUp) => PrevItem
-            | (Options, ArrowDown) => NextItem
-            | (Options, Tab) => NoOp
-            | (Options, Space) => SelectItem
-            | (Options, Enter) => SelectItem
+            | (Filter, ArrowDown) => FocusList(0)
+            | (Filter, Tab) => FocusList(0)
+            | (Options(index), ArrowUp) when index == 0 => FocusFilter
+            | (Options(index), ArrowUp) => FocusList(index - 1)
+            | (Options(index), ArrowDown) =>
+              switch (options) {
+              | None => NoOp
+              | Some(options) =>
+                let maxIndex = Array.length(options) - 1;
+
+                if (index == maxIndex) {
+                  NoOp;
+                } else {
+                  FocusList(index + 1);
+                };
+              }
+            | (Options(index), Tab) => FocusList(index + 1)
+            | (Options(index), Space)
+            | (Options(index), Enter) =>
+              switch (options) {
+              | Some(options) => SetCountry(options[index])
+              | None => NoOp
+              }
             | _ => NoOp
             };
           }
@@ -193,7 +221,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
 
     let className = Styles.root ++? className;
 
-    <div ref={ReactDOMRe.Ref.domRef(rootRef)} className onKeyDown>
+    <div ref={ReactDOM.Ref.domRef(rootRef)} className onKeyDown>
       {switch (options) {
        | None =>
          <CountrySelectDropdownButton
@@ -204,8 +232,6 @@ module Functor = (Request: CountrySelectAPI.Request) => {
            setRef={ref_ => send(SetButtonRef(ref_))}
          />
        | Some(options) =>
-         let filteredOptions = Utils.filterOptions(options, filter);
-
          <>
            <CountrySelectDropdownButton
              text=Option.(
@@ -226,13 +252,14 @@ module Functor = (Request: CountrySelectAPI.Request) => {
                     setRef={ref_ => send(SetFilterRef(ref_))}
                   />
                   <CountrySelectMenu.CountryList
-                    options=filteredOptions
+                    options
                     selectedCountry
                     onChangeCountry
                     onFocus=onFocusList
+                    focusIndex
                   />
                 </CountrySelectMenu.Wrapper>}
-         </>;
+         </>
        }}
     </div>;
   };

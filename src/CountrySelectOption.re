@@ -63,13 +63,28 @@ let make =
 
   let onFocus = event => {
     ReactEvent.Focus.preventDefault(event);
-    let target = ReactEvent.Focus.target(event);
+    ReactEvent.Focus.stopPropagation(event);
     onFocus();
-
-    Js.log2("Target:", target);
   };
 
-  <div tabIndex=0 className=wrapperClass onClick onFocus role="option">
+  let rootRef: React.ref(Js.Nullable.t(Dom.element)) =
+    React.useRef(Js.Nullable.null);
+
+  React.useEffect0(() => {
+    if (isFocused) {
+      Utils.ReactDom.focusRef(rootRef);
+    };
+
+    None;
+  });
+
+  <div
+    ref={ReactDOM.Ref.domRef(rootRef)}
+    tabIndex=0
+    className=wrapperClass
+    onClick
+    onFocus
+    role="option">
     <FlagIconCss countryCode=value />
     <p className=Styles.paragraph> {React.string(label)} </p>
   </div>;

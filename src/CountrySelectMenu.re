@@ -74,15 +74,18 @@ module CountryList = {
         ~onChangeCountry: CountrySelectTypes.Option.t => unit,
         ~selectedCountry: option(CountrySelectTypes.Option.t),
         ~onFocus: unit => unit,
+        ~focusIndex: option(int),
       ) => {
     let elements =
-      options->Belt.Array.map(
-        ({value, label} as option: CountrySelectTypes.Option.t) =>
+      options->Belt.Array.mapWithIndex(
+        (index, {value, label} as option: CountrySelectTypes.Option.t) =>
         <CountrySelectOption
           key=value
           value
           label
-          isFocused=false
+          isFocused=Belt.Option.(
+            map(focusIndex, idx => idx == index)->getWithDefault(false)
+          )
           isSelected=Belt.Option.(
             map(selectedCountry, c => c.value == value)->getWithDefault(false)
           )
