@@ -30,7 +30,7 @@ module FakeRequest: CountrySelectAPI.Request = {
     Relude.IO.pure(FakeOptions.options) |> Relude.IO.withDelay(500);
 };
 
-module CountrySelect = CountrySelect.Functor(FakeRequest);
+module CountrySelect = CountrySelect.FunctorComponent(FakeRequest);
 
 let getByText = str => getByText(~matcher=`Str(str), ~options=?None);
 
