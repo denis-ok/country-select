@@ -46,6 +46,7 @@ let make =
       ~value: string,
       ~label: string,
       ~onClick: unit => unit,
+      ~onKeyDown: ReactEvent.Keyboard.t => unit,
     ) => {
   let wrapperClass =
     switch (isFocused, isSelected) {
@@ -79,6 +80,7 @@ let make =
     tabIndex=0
     className=wrapperClass
     onClick
+    onKeyDown
     role="option">
     <FlagIconCss countryCode=value />
     <p className=Styles.paragraph> {React.string(label)} </p>

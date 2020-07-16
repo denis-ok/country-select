@@ -80,6 +80,7 @@ let make =
       ~opened: bool,
       ~onClick: unit => unit,
       ~onFocus: unit => unit,
+      ~onKeyDown: ReactEvent.Keyboard.t => unit,
       ~setRef: React.ref(Js.Nullable.t(Dom.element)) => unit,
     ) => {
   let onClick = (event: ReactEvent.Mouse.t) => {
@@ -96,6 +97,7 @@ let make =
     ref={ReactDOMRe.Ref.domRef(buttonRef)}
     className=Styles.button
     onClick
+    onKeyDown
     onFocus={Functions.omit(onFocus)}>
     <div className=Styles.text> {React.string(text)} </div>
     {Styles.iconSvg(opened)}
