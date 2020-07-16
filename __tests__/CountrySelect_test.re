@@ -12,13 +12,13 @@ module Promise = {
 };
 
 module FakeOptions = {
-  let opt1 = {ReactSelect.Option.label: "Argentina", value: "ar"};
-  let opt2 = {ReactSelect.Option.label: "Bangladesh", value: "bd"};
-  let opt3 = {ReactSelect.Option.label: "Chile", value: "cl"};
-  let opt4 = {ReactSelect.Option.label: "France", value: "fr"};
-  let opt5 = {ReactSelect.Option.label: "Latvia", value: "lv"};
-  let opt6 = {ReactSelect.Option.label: "Sweden", value: "se"};
-  let opt7 = {ReactSelect.Option.label: "Venezuela", value: "ve"};
+  let opt1 = {CountrySelectTypes.Option.label: "Argentina", value: "ar"};
+  let opt2 = {CountrySelectTypes.Option.label: "Bangladesh", value: "bd"};
+  let opt3 = {CountrySelectTypes.Option.label: "Chile", value: "cl"};
+  let opt4 = {CountrySelectTypes.Option.label: "France", value: "fr"};
+  let opt5 = {CountrySelectTypes.Option.label: "Latvia", value: "lv"};
+  let opt6 = {CountrySelectTypes.Option.label: "Sweden", value: "se"};
+  let opt7 = {CountrySelectTypes.Option.label: "Venezuela", value: "ve"};
 
   let options = [|opt1, opt2, opt3|];
 
