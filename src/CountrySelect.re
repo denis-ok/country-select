@@ -45,7 +45,7 @@ type action =
   | Blur
   | FocusButton
   | FocusFilter
-  | FocusList(int)
+  | FocusOptions(int)
   | NoOp;
 
 let reducer =
@@ -98,7 +98,7 @@ let reducer =
   | FocusFilter =>
     SideEffect(({state}) => Utils.ReactDom.focusOptRef(state.filterRef))
 
-  | FocusList(focusedIndex) =>
+  | FocusOptions(focusedIndex) =>
     Update({
       ...state,
       focusedSection: Some(Types.Section.Options(focusedIndex)),
@@ -196,7 +196,7 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
         | ArrowUp => FocusButton
         | ArrowDown
         | Enter
-        | Tab => FocusList(0)
+        | Tab => FocusOptions(0)
         | Escape => Blur
         | PageUp
         | PageDown
@@ -207,7 +207,7 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
       send(action);
     };
 
-    let onOptionsKeyDown =
+    let onOptionKeyDown =
         (
           focusedIndex: int,
           options: array(Types.Option.t),
@@ -218,10 +218,10 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
       let action =
         switch (key) {
         | ArrowUp when focusedIndex == 0 => FocusFilter
-        | ArrowUp => FocusList(focusedIndex - 1)
+        | ArrowUp => FocusOptions(focusedIndex - 1)
         | ArrowDown =>
           let maxIndex = Array.size(options) - 1;
-          focusedIndex == maxIndex ? NoOp : FocusList(focusedIndex + 1);
+          focusedIndex == maxIndex ? NoOp : FocusOptions(focusedIndex + 1);
         | Space
         | Enter =>
           switch (options[focusedIndex]) {
@@ -229,8 +229,12 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
           | None => NoOp
           }
         | Tab => FocusFilter
-        | PageUp
-        | PageDown => NoOp
+        // PageUp, PageDown keys have issues related to scrolling inside react-window
+        // Pagination capability limited intentionally
+        | PageUp =>
+          focusedIndex > 4 ? FocusOptions(focusedIndex - 4) : FocusOptions(0)
+        | PageDown =>
+          FocusOptions(focusedIndex + 4)
         | Escape => Blur
         | Unsupported => NoOp
         };
@@ -248,7 +252,7 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
         | Options(index) =>
           switch (options) {
           | None => ()
-          | Some(options) => onOptionsKeyDown(index, options, event)
+          | Some(options) => onOptionKeyDown(index, options, event)
           }
         }
       };
@@ -256,13 +260,14 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
 
     let className = Styles.root ++? className;
 
-    <div ref={ReactDOM.Ref.domRef(rootRef)} className onKeyDown>
+    <div ref={ReactDOM.Ref.domRef(rootRef)} className>
       {switch (options) {
        | None =>
          <CountrySelectDropdownButton
            text=Text.loading
            onClick=ignore
            opened=false
+           onKeyDown
            onFocus=onFocusButton
            setRef={ref_ => send(SetButtonRef(ref_))}
          />
@@ -277,16 +282,19 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
              opened=menuOpened
              onFocus=onFocusButton
              setRef={ref_ => send(SetButtonRef(ref_))}
+             onKeyDown
            />
            {menuOpened
             &&& <div className=Styles.menuWrapper>
                   <CountrySelectSearchFilter
+                    onKeyDown
                     value=filter
                     onChange=onChangeFilter
                     onFocus=onFocusFilter
                     setRef={ref_ => send(SetFilterRef(ref_))}
                   />
                   <CountrySelectMenu.CountryList
+                    onKeyDown
                     options
                     selectedCountry
                     onChangeCountry

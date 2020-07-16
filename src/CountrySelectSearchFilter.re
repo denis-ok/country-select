@@ -121,6 +121,7 @@ let make =
       ~value: string,
       ~onChange: string => unit,
       ~onFocus: unit => unit,
+      ~onKeyDown: ReactEvent.Keyboard.t => unit,
       ~setRef: React.ref(Js.Nullable.t(Dom.element)) => unit,
     ) => {
   let onChange = event => {
@@ -147,6 +148,7 @@ let make =
         value
         onChange
         onClick
+        onKeyDown
         placeholder
         className=Styles.input
         onFocus={Functions.omit(onFocus)}

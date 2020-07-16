@@ -1,5 +1,8 @@
 module Option = {
-  type t = ReactSelect.Option.t;
+  type t = {
+    value: string,
+    label: string,
+  };
 };
 
 module Section = {
