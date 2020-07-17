@@ -227,11 +227,14 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
         ) => {
       let key = Utils.ReactDom.keyFromEvent(event);
 
+      let maxIndex = Array.size(options) - 1;
+
       let action =
         switch (key) {
         | ArrowUp when focusedIndex == 0 => FocusFilter
         | ArrowUp => FocusOption(focusedIndex - 1)
-        | ArrowDown => FocusOption(focusedIndex + 1)
+        | ArrowDown =>
+          focusedIndex == maxIndex ? NoOp : FocusOption(focusedIndex + 1)
         | Space
         | Enter =>
           switch (options[focusedIndex]) {
@@ -243,7 +246,10 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
         // Pagination capability limited intentionally
         | PageUp =>
           focusedIndex > 4 ? FocusOption(focusedIndex - 4) : FocusOption(0)
-        | PageDown => FocusOption(focusedIndex + 4)
+        | PageDown =>
+          let targetIndex = focusedIndex + 4;
+          targetIndex > maxIndex
+            ? FocusOption(maxIndex) : FocusOption(targetIndex);
         | Escape => Blur
         | Unsupported => NoOp
         };
