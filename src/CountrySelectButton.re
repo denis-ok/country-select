@@ -95,6 +95,8 @@ let make =
     () => {
       if (focused) {
         Utils.ReactDom.focusRef(buttonRef);
+      } else {
+        Utils.ReactDom.blurRef(buttonRef);
       };
 
       None;

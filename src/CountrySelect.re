@@ -297,7 +297,9 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
              onKeyDown
            />
            {menuOpened
-            &&& <div className=Styles.menuWrapper>
+            &&& <div
+                  className=Styles.menuWrapper
+                  onClick=ReactEvent.Mouse.stopPropagation>
                   <CountrySelectFilter
                     onKeyDown
                     value=filter

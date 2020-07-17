@@ -129,10 +129,6 @@ let make =
     onChange(value);
   };
 
-  let onClick = (event: ReactEvent.Mouse.t) => {
-    ReactEvent.Mouse.preventDefault(event);
-  };
-
   let inputRef: React.ref(Js.Nullable.t(Dom.element)) =
     React.useRef(Js.Nullable.null);
 
@@ -156,7 +152,6 @@ let make =
         name="searchCountry"
         value
         onChange
-        onClick
         onKeyDown
         placeholder
         className=Styles.input
