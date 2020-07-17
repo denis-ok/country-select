@@ -26,12 +26,36 @@ module ListItemsReactWindow = {
     <ReactWindow.FixedSizeList
       className=ListItems.Styles.className
       height=Const.Size.menuHeightPx
-      width=Const.Size.menuWidthPx
+      width={Const.Size.menuWidthPx - 2}
       itemSize=Const.Size.menuOptionHeightPx
       itemCount={Array.length(children)}>
       {({index, style}) => <div style> {children[index]} </div>}
     </ReactWindow.FixedSizeList>;
   };
+};
+
+module CountryNotFound = {
+  module Styles = {
+    open Css;
+
+    let wrapper =
+      style([
+        boxSizing(borderBox),
+        display(flexBox),
+        flexDirection(`row),
+        alignItems(`center),
+        justifyContent(`center),
+        fontSize(Const.fontSizePx),
+        fontFamily(Const.fontFamily),
+        height(px(Const.Size.menuOptionHeightPx)),
+      ]);
+  };
+
+  [@react.component]
+  let make = () =>
+    <div className=Styles.wrapper tabIndex=(-1)>
+      {React.string("Country not found")}
+    </div>;
 };
 
 module CountryList = {
@@ -62,7 +86,9 @@ module CountryList = {
         />
       );
 
-    if (Array.length(options) <= 6) {
+    if (Array.length(options) == 0) {
+      <CountryNotFound />;
+    } else if (Array.length(options) <= 6) {
       <ListItems> {React.array(elements)} </ListItems>;
     } else {
       <ListItemsReactWindow> elements </ListItemsReactWindow>;

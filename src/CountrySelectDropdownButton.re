@@ -24,7 +24,7 @@ module Styles = {
             id="bg"
             strokeOpacity="0.2"
             stroke="#000000"
-            fill="#FFFFFF"
+            fill="none"
           />
           <g id="Group" transform="translate(286.000000, 195.000000)">
             <rect id="box" x="0" y="0" width="8" height="8" />
