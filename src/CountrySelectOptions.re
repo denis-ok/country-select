@@ -58,40 +58,38 @@ module CountryNotFound = {
     </div>;
 };
 
-module CountryList = {
-  [@react.component]
-  let make =
-      (
-        ~options: array(CountrySelectTypes.Option.t),
-        ~onChangeCountry: CountrySelectTypes.Option.t => unit,
-        ~selectedCountry: option(CountrySelectTypes.Option.t),
-        ~onKeyDown: ReactEvent.Keyboard.t => unit,
-        ~focusedIndex: option(int),
-      ) => {
-    let elements =
-      options->Belt.Array.mapWithIndex(
-        (index, {value, label} as option: CountrySelectTypes.Option.t) =>
-        <CountrySelectOption
-          key=value
-          value
-          label
-          isFocused=Belt.Option.(
-            map(focusedIndex, idx => idx == index)->getWithDefault(false)
-          )
-          isSelected=Belt.Option.(
-            map(selectedCountry, c => c.value == value)->getWithDefault(false)
-          )
-          onClick={() => onChangeCountry(option)}
-          onKeyDown
-        />
-      );
+[@react.component]
+let make =
+    (
+      ~options: array(CountrySelectTypes.Option.t),
+      ~onChangeCountry: CountrySelectTypes.Option.t => unit,
+      ~selectedCountry: option(CountrySelectTypes.Option.t),
+      ~onKeyDown: ReactEvent.Keyboard.t => unit,
+      ~focusedIndex: option(int),
+    ) => {
+  let elements =
+    options->Belt.Array.mapWithIndex(
+      (index, {value, label} as option: CountrySelectTypes.Option.t) =>
+      <CountrySelectOption
+        key=value
+        value
+        label
+        isFocused=Belt.Option.(
+          map(focusedIndex, idx => idx == index)->getWithDefault(false)
+        )
+        isSelected=Belt.Option.(
+          map(selectedCountry, c => c.value == value)->getWithDefault(false)
+        )
+        onClick={() => onChangeCountry(option)}
+        onKeyDown
+      />
+    );
 
-    if (Array.length(options) == 0) {
-      <CountryNotFound />;
-    } else if (Array.length(options) <= 6) {
-      <ListItems> {React.array(elements)} </ListItems>;
-    } else {
-      <ListItemsReactWindow> elements </ListItemsReactWindow>;
-    };
+  if (Array.length(options) == 0) {
+    <CountryNotFound />;
+  } else if (Array.length(options) <= 6) {
+    <ListItems> {React.array(elements)} </ListItems>;
+  } else {
+    <ListItemsReactWindow> elements </ListItemsReactWindow>;
   };
 };

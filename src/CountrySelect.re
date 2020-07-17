@@ -260,7 +260,7 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
     <div ref={ReactDOM.Ref.domRef(rootRef)} className>
       {switch (options) {
        | None =>
-         <CountrySelectDropdownButton
+         <CountrySelectButton
            text=Text.loading
            onClick=ignore
            opened=false
@@ -270,7 +270,7 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
          />
        | Some(options) =>
          <>
-           <CountrySelectDropdownButton
+           <CountrySelectButton
              text=Option.(
                map(selectedCountry, c => c.label)
                ->getWithDefault(Text.selectCountry)
@@ -283,14 +283,14 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
            />
            {menuOpened
             &&& <div className=Styles.menuWrapper>
-                  <CountrySelectSearchFilter
+                  <CountrySelectFilter
                     onKeyDown
                     value=filter
                     onChange=onChangeFilter
                     onFocus=onFocusFilter
                     setRef={ref_ => send(SetFilterRef(ref_))}
                   />
-                  <CountrySelectMenu.CountryList
+                  <CountrySelectOptions
                     onKeyDown
                     options
                     selectedCountry
