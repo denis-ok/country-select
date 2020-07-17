@@ -122,21 +122,26 @@ let make =
       ~onChange: string => unit,
       ~onFocus: unit => unit,
       ~onKeyDown: ReactEvent.Keyboard.t => unit,
-      ~setRef: React.ref(Js.Nullable.t(Dom.element)) => unit,
+      ~focused: bool,
     ) => {
   let onChange = event => {
     let value = Utils.ReactDom.getStringValueFromEvent(event);
     onChange(value);
   };
 
-  let onClick = (event: ReactEvent.Mouse.t) => {
-    ReactEvent.Mouse.preventDefault(event);
-  };
-
   let inputRef: React.ref(Js.Nullable.t(Dom.element)) =
     React.useRef(Js.Nullable.null);
 
-  ReludeReact.Effect.useOnMount(() => setRef(inputRef));
+  React.useEffect1(
+    () => {
+      if (focused) {
+        Utils.ReactDom.focusRef(inputRef);
+      };
+
+      None;
+    },
+    [|focused|],
+  );
 
   <div className=Styles.wrapper>
     <div className=Styles.iconInputWrapper>
@@ -147,7 +152,6 @@ let make =
         name="searchCountry"
         value
         onChange
-        onClick
         onKeyDown
         placeholder
         className=Styles.input

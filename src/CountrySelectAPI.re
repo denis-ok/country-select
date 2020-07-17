@@ -40,7 +40,6 @@ module Request: Request = {
     ReludeFetch.get(url)
     >>= ReludeFetch.Response.StatusCode.ensure2xx
     >>= ReludeFetch.Response.json
-    >>= Response.decode(url)
-    |> Relude.IO.withDelay(500);
+    >>= Response.decode(url);
   };
 };

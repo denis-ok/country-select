@@ -78,10 +78,10 @@ let make =
     (
       ~text: string,
       ~opened: bool,
+      ~focused: bool,
       ~onClick: unit => unit,
       ~onFocus: unit => unit,
       ~onKeyDown: ReactEvent.Keyboard.t => unit,
-      ~setRef: React.ref(Js.Nullable.t(Dom.element)) => unit,
     ) => {
   let onClick = (event: ReactEvent.Mouse.t) => {
     ReactEvent.Mouse.preventDefault(event);
@@ -91,7 +91,18 @@ let make =
   let buttonRef: React.ref(Js.Nullable.t(Dom.element)) =
     React.useRef(Js.Nullable.null);
 
-  ReludeReact.Effect.useOnMount(() => setRef(buttonRef));
+  React.useEffect1(
+    () => {
+      if (focused) {
+        Utils.ReactDom.focusRef(buttonRef);
+      } else {
+        Utils.ReactDom.blurRef(buttonRef);
+      };
+
+      None;
+    },
+    [|focused|],
+  );
 
   <button
     ref={ReactDOMRe.Ref.domRef(buttonRef)}

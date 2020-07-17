@@ -56,11 +56,6 @@ let make =
     | (false, false) => Styles.wrapper
     };
 
-  let onClick = (event: ReactEvent.Mouse.t) => {
-    ReactEvent.Mouse.preventDefault(event);
-    onClick();
-  };
-
   let rootRef: React.ref(Js.Nullable.t(Dom.element)) =
     React.useRef(Js.Nullable.null);
 
@@ -79,7 +74,7 @@ let make =
     ref={ReactDOM.Ref.domRef(rootRef)}
     tabIndex=0
     className=wrapperClass
-    onClick
+    onClick={Functions.omit(onClick)}
     onKeyDown
     role="option">
     <FlagIconCss countryCode=value />

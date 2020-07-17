@@ -13,6 +13,7 @@ let root =
 let menuWrapper =
   style([
     position(absolute),
+    backgroundColor(white),
     zIndex(1000),
     boxSizing(borderBox),
     display(flexBox),
