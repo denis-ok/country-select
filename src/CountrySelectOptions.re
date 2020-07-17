@@ -85,9 +85,7 @@ let make =
       />
     );
 
-  if (Array.length(options) == 0) {
-    <CountryNotFound />;
-  } else if (Array.length(options) <= 6) {
+  if (Array.length(options) <= 6) {
     <ListItems> {React.array(elements)} </ListItems>;
   } else {
     <ListItemsReactWindow> elements </ListItemsReactWindow>;
