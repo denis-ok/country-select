@@ -188,12 +188,14 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
       send(action);
     };
 
-    let onFilterKeyDown = (event: ReactEvent.Keyboard.t) => {
+    let onFilterKeyDown =
+        (event: ReactEvent.Keyboard.t, options: array(Types.Option.t)) => {
       let key = Utils.ReactDom.keyFromEvent(event);
 
       let action =
         switch (key) {
         | ArrowUp => FocusButton
+        | ArrowDown when Relude.Array.isEmpty(options) => NoOp
         | ArrowDown
         | Enter
         | Tab => FocusOptions(0)
@@ -209,9 +211,9 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
 
     let onOptionKeyDown =
         (
-          focusedIndex: int,
-          options: array(Types.Option.t),
           event: ReactEvent.Keyboard.t,
+          options: array(Types.Option.t),
+          focusedIndex: int,
         ) => {
       let key = Utils.ReactDom.keyFromEvent(event);
 
@@ -233,8 +235,7 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
         // Pagination capability limited intentionally
         | PageUp =>
           focusedIndex > 4 ? FocusOptions(focusedIndex - 4) : FocusOptions(0)
-        | PageDown =>
-          FocusOptions(focusedIndex + 4)
+        | PageDown => FocusOptions(focusedIndex + 4)
         | Escape => Blur
         | Unsupported => NoOp
         };
@@ -243,18 +244,14 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
     };
 
     let onKeyDown = (event: ReactEvent.Keyboard.t): unit => {
-      switch (focusedSection) {
-      | None => ()
-      | Some(element) =>
-        switch (element) {
+      switch (Functions.both(focusedSection, options)) {
+      | Some((section, options)) =>
+        switch (section) {
         | Button => onDropdownKeyDown(event)
-        | Filter => onFilterKeyDown(event)
-        | Options(index) =>
-          switch (options) {
-          | None => ()
-          | Some(options) => onOptionKeyDown(index, options, event)
-          }
+        | Filter => onFilterKeyDown(event, options)
+        | Options(index) => onOptionKeyDown(event, options, index)
         }
+      | None => ()
       };
     };
 
