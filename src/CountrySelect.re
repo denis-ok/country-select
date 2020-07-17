@@ -15,8 +15,6 @@ type state = {
   filter: string,
   focusedSection: option(Types.FocusedSection.t),
   rootRef: option(React.ref(Js.Nullable.t(Dom.element))),
-  filterRef: option(React.ref(Js.Nullable.t(Dom.element))),
-  buttonRef: option(React.ref(Js.Nullable.t(Dom.element))),
 };
 
 let initialState = {
@@ -25,8 +23,6 @@ let initialState = {
   filter: "",
   focusedSection: None,
   rootRef: None,
-  filterRef: None,
-  buttonRef: None,
 };
 
 type action =
@@ -37,12 +33,8 @@ type action =
   | SetFilter(string)
   | SetFocusedSection(Types.FocusedSection.t)
   | SetRootRef(React.ref(Js.Nullable.t(Dom.element)))
-  | SetFilterRef(React.ref(Js.Nullable.t(Dom.element)))
-  | SetButtonRef(React.ref(Js.Nullable.t(Dom.element)))
   | ToggleMenu
   | Blur
-  | FocusButton
-  | FocusFilter
   | FocusOption(int)
   | NoOp;
 
@@ -64,10 +56,7 @@ let reducer =
         selectedCountry: Some(country),
         focusedSection: Some(Button),
       },
-      ({send}) => {
-        send(FocusButton);
-        callback(country.value);
-      },
+      _ => callback(country.value),
     )
 
   | SetFilter(filter) => Update({...state, filter})
@@ -87,21 +76,7 @@ let reducer =
 
   | SetRootRef(ref_) => Update({...state, rootRef: Some(ref_)})
 
-  | SetFilterRef(ref_) => Update({...state, filterRef: Some(ref_)})
-
-  | SetButtonRef(ref_) => Update({...state, buttonRef: Some(ref_)})
-
-  | Blur =>
-    UpdateWithSideEffect(
-      {...state, focusedSection: None, filter: ""},
-      ({state}) => Utils.ReactDom.blurOptRef(state.buttonRef),
-    )
-
-  | FocusButton =>
-    SideEffect(({state}) => Utils.ReactDom.focusOptRef(state.buttonRef))
-
-  | FocusFilter =>
-    SideEffect(({state}) => Utils.ReactDom.focusOptRef(state.filterRef))
+  | Blur => Update({...state, focusedSection: None, filter: ""})
 
   | FocusOption(focusedIndex) =>
     Update({
@@ -130,6 +105,22 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
       | Some(Button) => false
       | Some(Filter) => true
       | Some(Options(_)) => true
+      };
+
+    let buttonFocused =
+      switch (focusedSection) {
+      | Some(Button) => true
+      | Some(Filter)
+      | Some(Options(_))
+      | None => false
+      };
+
+    let filterFocused =
+      switch (focusedSection) {
+      | Some(Filter) => true
+      | Some(Button)
+      | Some(Options(_))
+      | None => false
       };
 
     let filteredOptions = {
@@ -199,8 +190,8 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
         | ArrowUp
         | ArrowDown
         | Space
-        | Enter
-        | Tab => ToggleMenu
+        | Enter => ToggleMenu
+        | Tab
         | Escape => Blur
         | PageUp
         | PageDown
@@ -241,7 +232,7 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
 
       let action =
         switch (key) {
-        | ArrowUp when focusedIndex == 0 => FocusFilter
+        | ArrowUp when focusedIndex == 0 => SetFocusedSection(Filter)
         | ArrowUp => FocusOption(focusedIndex - 1)
         | ArrowDown =>
           focusedIndex == maxIndex ? NoOp : FocusOption(focusedIndex + 1)
@@ -251,7 +242,7 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
           | Some(country) => SelectCountry(country, onChange)
           | None => NoOp
           }
-        | Tab => FocusFilter
+        | Tab => SetFocusedSection(Filter)
         // PageUp, PageDown keys have issues related to scrolling inside react-window
         // Pagination capability limited intentionally
         | PageUp =>
@@ -288,9 +279,9 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
            text=Text.loading
            onClick=ignore
            opened=false
+           focused=buttonFocused
            onKeyDown
            onFocus=onFocusButton
-           setRef={ref_ => send(SetButtonRef(ref_))}
          />
        | Some(_options) =>
          <>
@@ -301,8 +292,8 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
              )
              onClick=toggleMenu
              opened=menuOpened
+             focused=buttonFocused
              onFocus=onFocusButton
-             setRef={ref_ => send(SetButtonRef(ref_))}
              onKeyDown
            />
            {menuOpened
@@ -312,7 +303,7 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
                     value=filter
                     onChange=onChangeFilter
                     onFocus=onFocusFilter
-                    setRef={ref_ => send(SetFilterRef(ref_))}
+                    focused=filterFocused
                   />
                   {switch (filteredOptions) {
                    | Some(filteredOptions) =>
