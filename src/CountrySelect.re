@@ -13,7 +13,6 @@ type state = {
   options: option(array(Types.Option.t)),
   selectedCountry: option(Types.Option.t),
   filter: string,
-  menuOpened: bool,
   focusedSection: option(Types.FocusedSection.t),
   rootRef: option(React.ref(Js.Nullable.t(Dom.element))),
   filterRef: option(React.ref(Js.Nullable.t(Dom.element))),
@@ -24,7 +23,6 @@ let initialState = {
   options: None,
   selectedCountry: None,
   filter: "",
-  menuOpened: false,
   focusedSection: None,
   rootRef: None,
   filterRef: None,
@@ -64,7 +62,6 @@ let reducer =
       {
         ...state,
         selectedCountry: Some(country),
-        menuOpened: false,
         focusedSection: Some(Button),
       },
       ({send}) => {
@@ -75,7 +72,15 @@ let reducer =
 
   | SetFilter(filter) => Update({...state, filter})
 
-  | ToggleMenu => Update({...state, menuOpened: !state.menuOpened})
+  | ToggleMenu =>
+    Update(
+      switch (state.focusedSection) {
+      | None
+      | Some(Filter)
+      | Some(Options(_)) => {...state, focusedSection: Some(Button)}
+      | Some(Button) => {...state, focusedSection: Some(Filter)}
+      },
+    )
 
   | SetFocusedSection(element) =>
     Update({...state, focusedSection: Some(element)})
@@ -88,7 +93,7 @@ let reducer =
 
   | Blur =>
     UpdateWithSideEffect(
-      {...state, focusedSection: None, menuOpened: false, filter: ""},
+      {...state, focusedSection: None, filter: ""},
       ({state}) => Utils.ReactDom.blurOptRef(state.buttonRef),
     )
 
@@ -116,11 +121,16 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
         ~optionsUrl: option(string)=?,
         ~className: option(string)=?,
       ) => {
-    let (
-      {options, selectedCountry, filter, menuOpened, focusedSection}: state,
-      send,
-    ) =
+    let ({options, selectedCountry, filter, focusedSection}: state, send) =
       ReludeReact.Reducer.useReducer(reducer, initialState);
+
+    let menuOpened =
+      switch (focusedSection) {
+      | None
+      | Some(Button) => false
+      | Some(Filter) => true
+      | Some(Options(_)) => true
+      };
 
     let filteredOptions = {
       switch (options) {
@@ -181,16 +191,16 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
 
     let onFocusFilter = () => SetFocusedSection(Filter)->send;
 
-    let onDropdownKeyDown = (event: ReactEvent.Keyboard.t) => {
+    let onButtonKeyDown = (event: ReactEvent.Keyboard.t) => {
       let key = Utils.ReactDom.keyFromEvent(event);
 
       let action =
         switch (key) {
-        | ArrowUp => ToggleMenu
-        | ArrowDown => menuOpened ? FocusFilter : ToggleMenu
+        | ArrowUp
+        | ArrowDown
         | Space
-        | Enter => ToggleMenu
-        | Tab
+        | Enter
+        | Tab => ToggleMenu
         | Escape => Blur
         | PageUp
         | PageDown
@@ -205,7 +215,7 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
 
       let action =
         switch (key) {
-        | ArrowUp => FocusButton
+        | ArrowUp => ToggleMenu
         | ArrowDown
         | Enter
         | Tab => FocusOption(0)
@@ -261,7 +271,7 @@ module FunctorComponent = (Request: CountrySelectAPI.Request) => {
       switch (Functions.both(focusedSection, filteredOptions)) {
       | Some((focusedSection, filteredOptions)) =>
         switch (focusedSection) {
-        | Button => onDropdownKeyDown(event)
+        | Button => onButtonKeyDown(event)
         | Filter => onFilterKeyDown(event)
         | Options(index) => onOptionKeyDown(event, filteredOptions, index)
         }
