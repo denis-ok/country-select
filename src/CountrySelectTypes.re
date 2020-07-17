@@ -5,7 +5,7 @@ module Option = {
   };
 };
 
-module Section = {
+module FocusedSection = {
   type t =
     | Button
     | Filter

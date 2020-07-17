@@ -78,9 +78,9 @@ module Styles = {
   let inputFocus =
     focus([
       outlineStyle(`none),
+      borderStyle(`solid),
       borderWidth(px(1)),
-      borderTopLeftRadius(px(2)),
-      borderTopRightRadius(px(2)),
+      borderRadius(px(1)),
       borderColor(Const.Color.focus),
     ]);
 
