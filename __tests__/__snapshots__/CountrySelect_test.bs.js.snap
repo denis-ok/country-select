@@ -1,137 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`CountrySelect Filter countries Country not found 1`] = `
-<div
-  class="css-15tkzy3"
-  tabindex="-1"
->
-  Country not found
-</div>
-`;
-
-exports[`CountrySelect List has role attribute 1`] = `
-<div
-  class="css-j0zze5"
-  role="listbox"
->
-  <div
-    class="css-1bsg7df"
-    role="option"
-    tabindex="0"
-  >
-    <span
-      class="flag-icon flag-icon-ar"
-      style="height: 10px; width: 14px;"
-    />
-    <p
-      class="css-1hl7lyr"
-    >
-      Argentina
-    </p>
-  </div>
-  <div
-    class="css-1bsg7df"
-    role="option"
-    tabindex="0"
-  >
-    <span
-      class="flag-icon flag-icon-bd"
-      style="height: 10px; width: 14px;"
-    />
-    <p
-      class="css-1hl7lyr"
-    >
-      Bangladesh
-    </p>
-  </div>
-  <div
-    class="css-1bsg7df"
-    role="option"
-    tabindex="0"
-  >
-    <span
-      class="flag-icon flag-icon-cl"
-      style="height: 10px; width: 14px;"
-    />
-    <p
-      class="css-1hl7lyr"
-    >
-      Chile
-    </p>
-  </div>
-</div>
-`;
-
-exports[`CountrySelect List with 7 items has role attribute 1`] = `
-<div
-  class="css-j0zze5"
-  role="listbox"
->
-  <div
-    class="css-1bsg7df"
-    role="option"
-    tabindex="0"
-  >
-    <span
-      class="flag-icon flag-icon-ar"
-      style="height: 10px; width: 14px;"
-    />
-    <p
-      class="css-1hl7lyr"
-    >
-      Argentina
-    </p>
-  </div>
-  <div
-    class="css-1bsg7df"
-    role="option"
-    tabindex="0"
-  >
-    <span
-      class="flag-icon flag-icon-bd"
-      style="height: 10px; width: 14px;"
-    />
-    <p
-      class="css-1hl7lyr"
-    >
-      Bangladesh
-    </p>
-  </div>
-  <div
-    class="css-1bsg7df"
-    role="option"
-    tabindex="0"
-  >
-    <span
-      class="flag-icon flag-icon-cl"
-      style="height: 10px; width: 14px;"
-    />
-    <p
-      class="css-1hl7lyr"
-    >
-      Chile
-    </p>
-  </div>
-</div>
-`;
-
-exports[`CountrySelect Loading placeholder 1`] = `
-<div
-  class="css-mp2u"
->
-  Loading...
-</div>
-`;
-
-exports[`CountrySelect Open menu and select country 1`] = `undefined`;
-
-exports[`CountrySelect Open menu by click 1`] = `
+exports[`Click handling Open menu 1`] = `
 <input
   class="css-6l3j7s"
   name="searchCountry"
   placeholder="Search"
   value=""
 />
+`;
+
+exports[`Click handling Open menu and select country 1`] = `undefined`;
+
+exports[`CountrySelect Loading text -> Select Country text 1`] = `
+<div
+  class="css-mp2u"
+>
+  Select Country
+</div>
 `;
 
 exports[`CountrySelect Options have role attribute 1`] = `
@@ -182,6 +67,59 @@ Array [
     </p>
   </div>,
 ]
+`;
+
+exports[`CountrySelect Options list has role attribute 1`] = `
+<div
+  class="css-j0zze5"
+  role="listbox"
+>
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-ar"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      Argentina
+    </p>
+  </div>
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-bd"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      Bangladesh
+    </p>
+  </div>
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-cl"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      Chile
+    </p>
+  </div>
+</div>
 `;
 
 exports[`CountrySelect Pass country prop 1`] = `
@@ -377,10 +315,11 @@ Object {
 }
 `;
 
-exports[`CountrySelect Select Country placeholder 1`] = `
+exports[`Filter countries Country not found 1`] = `
 <div
-  class="css-mp2u"
+  class="css-15tkzy3"
+  tabindex="-1"
 >
-  Select Country
+  Country not found
 </div>
 `;
