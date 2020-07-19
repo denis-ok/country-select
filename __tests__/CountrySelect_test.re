@@ -184,7 +184,7 @@ describe("KeyDown handling", () => {
     });
   });
 
-  describe("Focused filter ->", () => {
+  describe("Focus filter ->", () => {
     let renderFocusedFilter = () => {
       let rendered = renderSelector();
 
@@ -199,6 +199,14 @@ describe("KeyDown handling", () => {
            (rendered, input);
          });
     };
+
+    testPromise("Escape", () => {
+      renderFocusedFilter()
+      |> Promise.map(((rendered, input)) => {
+           Event.pressEscape(input);
+           rendered |> getByRole'("button") |> expect |> not_ |> toHaveFocus;
+         })
+    });
 
     testPromise("ArrowDown -> Enter", () => {
       renderFocusedFilter()
@@ -237,6 +245,37 @@ describe("KeyDown handling", () => {
          })
       |> Promise.map(el =>
            expect(el) |> toHaveAttribute("aria-expanded", ~value="false")
+         )
+    });
+
+    testPromise("ArrowDown -> PageDown -> PageDown", () => {
+      renderFocusedFilter()
+      |> Promise.map(((rendered, input)) => {
+           Event.pressArrowDown(input);
+           Event.pressPageDown(input);
+           Event.pressPageDown(input);
+           Event.pressEnter(input);
+           rendered |> getByRole'("button");
+         })
+      |> Promise.map(el =>
+           expect(el) |> toHaveTextContent(`Str("Sweden"), ~options=?None)
+         )
+    });
+
+    testPromise("ArrowDown -> PgDown -> PgDown -> PageUp -> PageUp ", () => {
+      renderFocusedFilter()
+      |> Promise.map(((rendered, input)) => {
+           Event.pressArrowDown(input);
+           Event.pressPageDown(input);
+           Event.pressPageDown(input);
+           Event.pressPageUp(input);
+           Event.pressPageUp(input);
+           Event.pressEnter(input);
+           rendered |> getByRole'("button");
+         })
+      |> Promise.map(el =>
+           expect(el)
+           |> toHaveTextContent(`Str("Argentina"), ~options=?None)
          )
     });
   });

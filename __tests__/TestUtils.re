@@ -16,6 +16,12 @@ module Event = {
   let pressArrowDown =
     FireEvent.keyDown(~eventInit={"key": "ArrowDown", "code": "ArrowDown"});
 
+  let pressPageUp =
+    FireEvent.keyDown(~eventInit={"key": "PageUp", "code": "PageUp"});
+
+  let pressPageDown =
+    FireEvent.keyDown(~eventInit={"key": "PageDown", "code": "PageDown"});
+
   let pressEnter =
     FireEvent.keyDown(~eventInit={"key": "Enter", "code": "Enter"});
 
