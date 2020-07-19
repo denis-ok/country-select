@@ -36,6 +36,9 @@ let getByText = str => getByText(~matcher=`Str(str), ~options=?None);
 
 let getByRole = str => getByRole(~matcher=`Str(str), ~options=?None);
 
+let getByDisplayValue = str =>
+  getByDisplayValue(~matcher=`Str(str), ~options=?None);
+
 let getAllByRole = str => getAllByRole(~matcher=`Str(str), ~options=?None);
 
 let findByText = str => findByText(~matcher=`Str(str), ~options=?None);
@@ -146,5 +149,32 @@ describe("CountrySelect", () => {
     |> Promise.map(button => act(() => button |> Event.click))
     |> Promise.map(() => rendered |> getAllByRole("option"))
     |> Promise.map(el => expect(el) |> toMatchSnapshot);
+  });
+
+  describe("Filter countries", () => {
+    testPromise("Case insensitive", () => {
+      let rendered = renderSelector();
+
+      rendered
+      |> findByText("Select Country")
+      |> Promise.map(button => act(() => button |> Event.click))
+      |> Promise.flatMap(() => rendered |> findByPlaceholderText("Search"))
+      |> Promise.map(input => UserEvent.typeText(input, "chil"))
+      |> Promise.map(() => rendered |> getAllByRole("option"))
+      |> Promise.map(es => expect(Array.length(es)) |> toEqual(1));
+    });
+
+    testPromise("Country not found", () => {
+      let rendered = renderSelector();
+
+      rendered
+      |> findByText("Select Country")
+      |> Promise.map(button => act(() => button |> Event.click))
+      |> Promise.flatMap(() => rendered |> findByPlaceholderText("Search"))
+      |> Promise.map(input => UserEvent.typeText(input, "lala"))
+      |> Promise.map(() => getByDisplayValue("lala"))
+      |> Promise.flatMap(_ => rendered |> findByText("Country not found"))
+      |> Promise.map(el => expect(el) |> toMatchSnapshot);
+    });
   });
 });

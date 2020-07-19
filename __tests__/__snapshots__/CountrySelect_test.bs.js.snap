@@ -1,5 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`CountrySelect Filter countries Country not found 1`] = `
+<div
+  class="css-15tkzy3"
+  tabindex="-1"
+>
+  Country not found
+</div>
+`;
+
 exports[`CountrySelect List has role attribute 1`] = `
 <div
   class="css-j0zze5"
