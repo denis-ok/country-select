@@ -36,7 +36,11 @@
     "relude-fetch",
     "relude-reason-react"
   ],
-  "bs-dev-dependencies": ["@glennsl/bs-jest", "bs-react-testing-library"],
+  "bs-dev-dependencies": [
+    "@glennsl/bs-jest",
+    "bs-dom-testing-library",
+    "bs-react-testing-library"
+  ],
   "warnings": {
     "number": "+A-4-9-20",
     "error": "+A"
