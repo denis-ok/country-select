@@ -201,6 +201,7 @@ Object {
         class="css-tzx47j"
       >
         <button
+          aria-expanded="false"
           class="css-jpvxsl"
         >
           <div
@@ -264,6 +265,7 @@ Object {
       class="css-tzx47j"
     >
       <button
+        aria-expanded="false"
         class="css-jpvxsl"
       >
         <div

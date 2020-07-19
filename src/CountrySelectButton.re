@@ -109,7 +109,8 @@ let make =
     className=Styles.button
     onClick
     onKeyDown
-    onFocus={Functions.omit(onFocus)}>
+    onFocus={Functions.omit(onFocus)}
+    ariaExpanded=opened>
     <div className=Styles.text> {React.string(text)} </div>
     {Styles.iconSvg(opened)}
   </button>;
