@@ -66,6 +66,51 @@ Array [
       Chile
     </p>
   </div>,
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-fr"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      France
+    </p>
+  </div>,
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-lv"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      Latvia
+    </p>
+  </div>,
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-se"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      Sweden
+    </p>
+  </div>,
 ]
 `;
 
@@ -117,6 +162,51 @@ exports[`CountrySelect Options list has role attribute 1`] = `
       class="css-1hl7lyr"
     >
       Chile
+    </p>
+  </div>
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-fr"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      France
+    </p>
+  </div>
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-lv"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      Latvia
+    </p>
+  </div>
+  <div
+    class="css-1bsg7df"
+    role="option"
+    tabindex="0"
+  >
+    <span
+      class="flag-icon flag-icon-se"
+      style="height: 10px; width: 14px;"
+    />
+    <p
+      class="css-1hl7lyr"
+    >
+      Sweden
     </p>
   </div>
 </div>

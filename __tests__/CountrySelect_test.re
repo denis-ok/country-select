@@ -10,16 +10,13 @@ module FakeOptions = {
   let opt4 = {CountrySelectTypes.Option.label: "France", value: "fr"};
   let opt5 = {CountrySelectTypes.Option.label: "Latvia", value: "lv"};
   let opt6 = {CountrySelectTypes.Option.label: "Sweden", value: "se"};
-  let opt7 = {CountrySelectTypes.Option.label: "Venezuela", value: "ve"};
 
-  let options = [|opt1, opt2, opt3|];
-
-  let manyOptions = [|opt1, opt2, opt3, opt4, opt5, opt6, opt7|];
+  let options = [|opt1, opt2, opt3, opt4, opt5, opt6|];
 };
 
 module FakeRequest: CountrySelectAPI.Request = {
   let getCountriesIO = _url =>
-    Relude.IO.pure(FakeOptions.options) |> Relude.IO.withDelay(500);
+    Relude.IO.pure(FakeOptions.options) |> Relude.IO.withDelay(200);
 };
 
 module CountrySelect = CountrySelect.FunctorComponent(FakeRequest);
@@ -162,7 +159,7 @@ describe("KeyDown handling", () => {
     testPromise("ArrowDown", () =>
       focusButton()
       |> Promise.map(btn => {
-           Event.pressKeyDown(btn);
+           Event.pressArrowDown(btn);
 
            expect(btn) |> toHaveAttribute("aria-expanded", ~value="true");
          })
@@ -187,55 +184,60 @@ describe("KeyDown handling", () => {
     });
   });
 
-  testPromise("Focus Filter -> ArrowDown -> Enter", () => {
-    let rendered = renderSelector();
-    rendered
-    |> findByText'("Select Country")
-    |> Promise.map(button => act(() => button |> Event.click))
-    |> Promise.map(() => rendered |> getByPlaceholderText'("Search"))
-    |> Promise.map(input => {
-         Event.pressKeyDown(input);
-         Event.pressEnter(input);
-         rendered |> getByRole'("button");
-       })
-    |> Promise.map(el =>
-         expect(el) |> toHaveTextContent(`Str("Argentina"), ~options=?None)
-       );
-  });
+  describe("Focused filter ->", () => {
+    let renderFocusedFilter = () => {
+      let rendered = renderSelector();
 
-  testPromise("Focus Filter -> ArrowDown -> ArrowDown -> Space", () => {
-    let rendered = renderSelector();
-    rendered
-    |> findByText'("Select Country")
-    |> Promise.map(button => act(() => button |> Event.click))
-    |> Promise.map(() => rendered |> getByPlaceholderText'("Search"))
-    |> Promise.map(input => {
-         Event.pressKeyDown(input);
-         Event.pressKeyDown(input);
-         Event.pressSpace(input);
-         rendered |> getByRole'("button");
-       })
-    |> Promise.map(el =>
-         expect(el) |> toHaveTextContent(`Str("Bangladesh"), ~options=?None)
-       );
-  });
+      rendered
+      |> findByText'("Select Country")
+      |> Promise.map(_ => {
+           let button = rendered |> getByRole'("button");
+           Event.focus(button);
+           Event.pressEnter(button);
+           let input = getByPlaceholderText'("Search", rendered);
 
-  testPromise(
-    "Focus Filter -> ArrowDown -> ArrowUp -> ArrowUp -> Menu closed", () => {
-    let rendered = renderSelector();
+           (rendered, input);
+         });
+    };
 
-    rendered
-    |> findByText'("Select Country")
-    |> Promise.map(button => act(() => button |> Event.click))
-    |> Promise.map(() => rendered |> getByPlaceholderText'("Search"))
-    |> Promise.map(input => {
-         Event.pressKeyDown(input);
-         Event.pressKeyUp(input);
-         Event.pressKeyUp(input);
-         rendered |> getByRole'("button");
-       })
-    |> Promise.map(el =>
-         expect(el) |> toHaveAttribute("aria-expanded", ~value="false")
-       );
+    testPromise("ArrowDown -> Enter", () => {
+      renderFocusedFilter()
+      |> Promise.map(((rendered, input)) => {
+           Event.pressArrowDown(input);
+           Event.pressEnter(input);
+           rendered |> getByRole'("button");
+         })
+      |> Promise.map(el =>
+           expect(el)
+           |> toHaveTextContent(`Str("Argentina"), ~options=?None)
+         )
+    });
+
+    testPromise("ArrowDown -> ArrowDown -> Space", () => {
+      renderFocusedFilter()
+      |> Promise.map(((rendered, input)) => {
+           Event.pressArrowDown(input);
+           Event.pressArrowDown(input);
+           Event.pressSpace(input);
+           rendered |> getByRole'("button");
+         })
+      |> Promise.map(el =>
+           expect(el)
+           |> toHaveTextContent(`Str("Bangladesh"), ~options=?None)
+         )
+    });
+
+    testPromise("ArrowDown -> ArrowUp -> ArrowUp -> Menu closed", () => {
+      renderFocusedFilter()
+      |> Promise.map(((rendered, input)) => {
+           Event.pressArrowDown(input);
+           Event.pressArrowUp(input);
+           Event.pressArrowUp(input);
+           rendered |> getByRole'("button");
+         })
+      |> Promise.map(el =>
+           expect(el) |> toHaveAttribute("aria-expanded", ~value="false")
+         )
+    });
   });
 });

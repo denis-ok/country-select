@@ -10,10 +10,10 @@ module Promise = {
 };
 
 module Event = {
-  let pressKeyUp =
+  let pressArrowUp =
     FireEvent.keyDown(~eventInit={"key": "ArrowUp", "code": "ArrowUp"});
 
-  let pressKeyDown =
+  let pressArrowDown =
     FireEvent.keyDown(~eventInit={"key": "ArrowDown", "code": "ArrowDown"});
 
   let pressEnter =
