@@ -16,10 +16,11 @@ module FakeOptions = {
 
 module FakeRequest: CountrySelectAPI.Request = {
   let getCountriesIO = _url =>
-    Relude.IO.pure(FakeOptions.options) |> Relude.IO.withDelay(200);
+    CountrySelectAPI.Response.decode("fakeurl", FakeResponse.json)
+    |> Relude.IO.withDelay(200);
 };
 
-module CountrySelect = CountrySelect.FunctorComponent(FakeRequest);
+module CountrySelect = CountrySelectComponent.Functor(FakeRequest);
 
 let renderSelector = () =>
   render(<CountrySelect country=None onChange=ignore />);
