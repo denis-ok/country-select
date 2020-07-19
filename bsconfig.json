@@ -39,7 +39,8 @@
   "bs-dev-dependencies": [
     "@glennsl/bs-jest",
     "bs-dom-testing-library",
-    "bs-react-testing-library"
+    "bs-react-testing-library",
+    "bs-jest-dom"
   ],
   "warnings": {
     "number": "+A-4-9-20",
