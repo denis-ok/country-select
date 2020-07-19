@@ -1,15 +1,7 @@
 open Jest;
 open Expect;
 open ReactTestingLibrary;
-
-module Promise = {
-  let map: ('a => 'b, Js.Promise.t('a)) => Js.Promise.t('b) =
-    (f, p) => p |> Js.Promise.then_(a => Js.Promise.resolve(f(a)));
-
-  let flatMap:
-    ('a => Js.Promise.t('b), Js.Promise.t('a)) => Js.Promise.t('b) =
-    (f, p) => p |> Js.Promise.then_(a => f(a));
-};
+open TestUtils;
 
 module FakeOptions = {
   let opt1 = {CountrySelectTypes.Option.label: "Argentina", value: "ar"};
@@ -18,61 +10,20 @@ module FakeOptions = {
   let opt4 = {CountrySelectTypes.Option.label: "France", value: "fr"};
   let opt5 = {CountrySelectTypes.Option.label: "Latvia", value: "lv"};
   let opt6 = {CountrySelectTypes.Option.label: "Sweden", value: "se"};
-  let opt7 = {CountrySelectTypes.Option.label: "Venezuela", value: "ve"};
 
-  let options = [|opt1, opt2, opt3|];
-
-  let manyOptions = [|opt1, opt2, opt3, opt4, opt5, opt6, opt7|];
+  let options = [|opt1, opt2, opt3, opt4, opt5, opt6|];
 };
 
 module FakeRequest: CountrySelectAPI.Request = {
   let getCountriesIO = _url =>
-    Relude.IO.pure(FakeOptions.options) |> Relude.IO.withDelay(500);
+    CountrySelectAPI.Response.decode("fakeurl", FakeResponse.json)
+    |> Relude.IO.withDelay(200);
 };
 
-module CountrySelect = CountrySelect.FunctorComponent(FakeRequest);
-
-let getByText = str => getByText(~matcher=`Str(str), ~options=?None);
-
-let getByRole = str => getByRole(~matcher=`Str(str), ~options=?None);
-
-let getAllByRole = str => getAllByRole(~matcher=`Str(str), ~options=?None);
-
-let findByText = str => findByText(~matcher=`Str(str), ~options=?None);
-
-let findByRole = str => findByRole(~matcher=`Str(str), ~options=?None);
-
-let findAllRole = str => findAllByRole(~matcher=`Str(str), ~options=?None);
-
-let findByPlaceholderText = str =>
-  findByPlaceholderText(~matcher=`Str(str), ~options=?None);
+module CountrySelect = CountrySelectComponent.Functor(FakeRequest);
 
 let renderSelector = () =>
   render(<CountrySelect country=None onChange=ignore />);
-
-module Event = {
-  let pressKeyDown =
-    FireEvent.keyDown(
-      ~eventInit={"key": "ArrowDown", "keyCode": 40, "code": 40},
-    );
-
-  let pressEnter =
-    FireEvent.keyDown(
-      ~eventInit={"key": "Enter", "keyCode": 13, "code": 13},
-    );
-
-  let pressTab =
-    FireEvent.keyDown(~eventInit={"key": "Tab", "keyCode": 9, "code": 9});
-
-  let pressC =
-    FireEvent.keyPress(
-      ~eventInit={"key": "c", "keyCode": 67, "code": "KeyC"},
-    );
-
-  let click = FireEvent.click(~eventInit=?None);
-
-  let focus = FireEvent.focus(~eventInit=?None);
-};
 
 describe("CountrySelect", () => {
   test("Render", () =>
@@ -81,60 +32,26 @@ describe("CountrySelect", () => {
 
   testPromise("Pass country prop", () =>
     render(<CountrySelect country={Some("bd")} onChange=ignore />)
-    |> findByText("Bangladesh")
+    |> findByText'("Bangladesh")
     |> Promise.map(el => expect(el) |> toMatchSnapshot)
   );
 
-  testPromise("Loading placeholder", () =>
-    renderSelector()
-    |> findByText("Loading...")
-    |> Promise.map(el => expect(el) |> toMatchSnapshot)
-  );
-
-  testPromise("Select Country placeholder", () =>
-    renderSelector()
-    |> findByText("Select Country")
-    |> Promise.map(el => expect(el) |> toMatchSnapshot)
-  );
-
-  testPromise("Open menu by click", () => {
+  testPromise("Loading text -> Select Country text", () => {
     let rendered = renderSelector();
 
     rendered
-    |> findByText("Select Country")
-    |> Promise.map(button => act(() => button |> Event.click))
-    |> Promise.flatMap(() => rendered |> findByPlaceholderText("Search"))
+    |> findByText'("Loading...")
+    |> Promise.flatMap(_ => rendered |> findByText'("Select Country"))
     |> Promise.map(el => expect(el) |> toMatchSnapshot);
   });
 
-  testPromise("Open menu and select country", () => {
+  testPromise("Options list has role attribute", () => {
     let rendered = renderSelector();
 
     rendered
-    |> findByText("Select Country")
+    |> findByText'("Select Country")
     |> Promise.map(button => act(() => button |> Event.click))
-    |> Promise.flatMap(() => rendered |> findByText("Bangladesh"))
-    |> Promise.map(option => act(() => option |> Event.click))
-    |> Promise.map(el => expect(el) |> toMatchSnapshot);
-  });
-
-  testPromise("List has role attribute", () => {
-    let rendered = renderSelector();
-
-    rendered
-    |> findByText("Select Country")
-    |> Promise.map(button => act(() => button |> Event.click))
-    |> Promise.map(() => rendered |> getByRole("listbox"))
-    |> Promise.map(el => expect(el) |> toMatchSnapshot);
-  });
-
-  testPromise("List with 7 items has role attribute", () => {
-    let rendered = renderSelector();
-
-    rendered
-    |> findByText("Select Country")
-    |> Promise.map(button => act(() => button |> Event.click))
-    |> Promise.map(() => rendered |> getByRole("listbox"))
+    |> Promise.map(() => rendered |> getByRole'("listbox"))
     |> Promise.map(el => expect(el) |> toMatchSnapshot);
   });
 
@@ -142,9 +59,225 @@ describe("CountrySelect", () => {
     let rendered = renderSelector();
 
     rendered
-    |> findByText("Select Country")
+    |> findByText'("Select Country")
     |> Promise.map(button => act(() => button |> Event.click))
-    |> Promise.map(() => rendered |> getAllByRole("option"))
+    |> Promise.map(() => rendered |> getAllByRole'("option"))
     |> Promise.map(el => expect(el) |> toMatchSnapshot);
+  });
+});
+
+describe("Filter countries", () => {
+  testPromise("Case insensitive", () => {
+    let rendered = renderSelector();
+
+    rendered
+    |> findByText'("Select Country")
+    |> Promise.map(button => act(() => button |> Event.click))
+    |> Promise.flatMap(() => rendered |> findByPlaceholderText'("Search"))
+    |> Promise.map(input => UserEvent.typeText(input, "chil"))
+    |> Promise.map(() => rendered |> getAllByRole'("option"))
+    |> Promise.map(es => expect(Array.length(es)) |> toEqual(1));
+  });
+
+  testPromise("Country not found", () => {
+    let rendered = renderSelector();
+
+    rendered
+    |> findByText'("Select Country")
+    |> Promise.map(button => act(() => button |> Event.click))
+    |> Promise.flatMap(() => rendered |> findByPlaceholderText'("Search"))
+    |> Promise.map(input => UserEvent.typeText(input, "lala"))
+    |> Promise.map(() => getByDisplayValue'("lala"))
+    |> Promise.flatMap(_ => rendered |> findByText'("Country not found"))
+    |> Promise.map(el => expect(el) |> toMatchSnapshot);
+  });
+});
+
+describe("Click handling", () => {
+  testPromise("Open menu", () => {
+    let rendered = renderSelector();
+
+    rendered
+    |> findByText'("Select Country")
+    |> Promise.map(button => act(() => button |> Event.click))
+    |> Promise.flatMap(() => rendered |> findByPlaceholderText'("Search"))
+    |> Promise.map(el => expect(el) |> toMatchSnapshot);
+  });
+
+  testPromise("Open menu and select country", () => {
+    let rendered = renderSelector();
+
+    rendered
+    |> findByText'("Select Country")
+    |> Promise.map(button => act(() => button |> Event.click))
+    |> Promise.flatMap(() => rendered |> findByText'("Bangladesh"))
+    |> Promise.map(option => act(() => option |> Event.click))
+    |> Promise.map(el => expect(el) |> toMatchSnapshot);
+  });
+});
+
+describe("KeyDown handling", () => {
+  open! JestDom;
+
+  describe("Focus button ->", () => {
+    let focusButton = () => {
+      let rendered = renderSelector();
+
+      rendered
+      |> findByText'("Select Country")
+      |> Promise.map(_ => {
+           let button = rendered |> getByRole'("button");
+           Event.focus(button);
+           button;
+         });
+    };
+
+    testPromise("Check attribute", () =>
+      focusButton()
+      |> Promise.map(btn =>
+           expect(btn) |> toHaveAttribute("aria-expanded", ~value="false")
+         )
+    );
+
+    testPromise("Enter", () =>
+      focusButton()
+      |> Promise.map(btn => {
+           Event.pressEnter(btn);
+
+           expect(btn) |> toHaveAttribute("aria-expanded", ~value="true");
+         })
+    );
+
+    testPromise("Space", () =>
+      focusButton()
+      |> Promise.map(btn => {
+           Event.pressSpace(btn);
+
+           expect(btn) |> toHaveAttribute("aria-expanded", ~value="true");
+         })
+    );
+
+    testPromise("ArrowDown", () =>
+      focusButton()
+      |> Promise.map(btn => {
+           Event.pressArrowDown(btn);
+
+           expect(btn) |> toHaveAttribute("aria-expanded", ~value="true");
+         })
+    );
+
+    testPromise("Escape", () =>
+      focusButton()
+      |> Promise.map(btn => {
+           Event.pressEscape(btn);
+
+           expect(btn) |> not_ |> toHaveFocus;
+         })
+    );
+
+    testPromise("Tab", () => {
+      focusButton()
+      |> Promise.map(btn => {
+           Event.pressTab(btn);
+
+           expect(btn) |> not_ |> toHaveFocus;
+         })
+    });
+  });
+
+  describe("Focus filter ->", () => {
+    let renderFocusedFilter = () => {
+      let rendered = renderSelector();
+
+      rendered
+      |> findByText'("Select Country")
+      |> Promise.map(_ => {
+           let button = rendered |> getByRole'("button");
+           Event.focus(button);
+           Event.pressEnter(button);
+           let input = getByPlaceholderText'("Search", rendered);
+
+           (rendered, input);
+         });
+    };
+
+    testPromise("Escape", () => {
+      renderFocusedFilter()
+      |> Promise.map(((rendered, input)) => {
+           Event.pressEscape(input);
+           rendered |> getByRole'("button") |> expect |> not_ |> toHaveFocus;
+         })
+    });
+
+    testPromise("ArrowDown -> Enter", () => {
+      renderFocusedFilter()
+      |> Promise.map(((rendered, input)) => {
+           Event.pressArrowDown(input);
+           Event.pressEnter(input);
+           rendered |> getByRole'("button");
+         })
+      |> Promise.map(el =>
+           expect(el)
+           |> toHaveTextContent(`Str("Argentina"), ~options=?None)
+         )
+    });
+
+    testPromise("ArrowDown -> ArrowDown -> Space", () => {
+      renderFocusedFilter()
+      |> Promise.map(((rendered, input)) => {
+           Event.pressArrowDown(input);
+           Event.pressArrowDown(input);
+           Event.pressSpace(input);
+           rendered |> getByRole'("button");
+         })
+      |> Promise.map(el =>
+           expect(el)
+           |> toHaveTextContent(`Str("Bangladesh"), ~options=?None)
+         )
+    });
+
+    testPromise("ArrowDown -> ArrowUp -> ArrowUp -> Menu closed", () => {
+      renderFocusedFilter()
+      |> Promise.map(((rendered, input)) => {
+           Event.pressArrowDown(input);
+           Event.pressArrowUp(input);
+           Event.pressArrowUp(input);
+           rendered |> getByRole'("button");
+         })
+      |> Promise.map(el =>
+           expect(el) |> toHaveAttribute("aria-expanded", ~value="false")
+         )
+    });
+
+    testPromise("ArrowDown -> PageDown -> PageDown", () => {
+      renderFocusedFilter()
+      |> Promise.map(((rendered, input)) => {
+           Event.pressArrowDown(input);
+           Event.pressPageDown(input);
+           Event.pressPageDown(input);
+           Event.pressEnter(input);
+           rendered |> getByRole'("button");
+         })
+      |> Promise.map(el =>
+           expect(el) |> toHaveTextContent(`Str("Sweden"), ~options=?None)
+         )
+    });
+
+    testPromise("ArrowDown -> PgDown -> PgDown -> PageUp -> PageUp ", () => {
+      renderFocusedFilter()
+      |> Promise.map(((rendered, input)) => {
+           Event.pressArrowDown(input);
+           Event.pressPageDown(input);
+           Event.pressPageDown(input);
+           Event.pressPageUp(input);
+           Event.pressPageUp(input);
+           Event.pressEnter(input);
+           rendered |> getByRole'("button");
+         })
+      |> Promise.map(el =>
+           expect(el)
+           |> toHaveTextContent(`Str("Argentina"), ~options=?None)
+         )
+    });
   });
 });
