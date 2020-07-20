@@ -14,7 +14,7 @@ module Style = {
 
     let menuBorder = `rgba((0, 0, 0, 0.08));
 
-    let menuItemFocused = `rgb((235, 235, 235));
+    let activeItemBackground = `rgb((235, 235, 235));
 
     let hover = `rgb((245, 245, 245));
 

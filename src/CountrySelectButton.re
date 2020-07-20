@@ -41,6 +41,8 @@ module Styles = {
   let buttonFocus =
     focus([outlineStyle(`none), borderColor(Const.Color.focus)]);
 
+  let buttonActive = active([backgroundColor(Const.Color.activeItemBackground)]);
+
   let button =
     style([
       boxSizing(borderBox),
@@ -61,6 +63,7 @@ module Styles = {
       backgroundColor(white),
       buttonHover,
       buttonFocus,
+      buttonActive,
     ]);
 
   let text =
@@ -110,6 +113,7 @@ let make =
     onClick
     onKeyDown
     onFocus={Functions.omit(onFocus)}
+    onMouseDown=ReactEvent.Mouse.preventDefault
     ariaExpanded=opened>
     <div className=Styles.text> {React.string(text)} </div>
     {Styles.iconSvg(opened)}

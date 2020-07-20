@@ -3,17 +3,6 @@ open Expect;
 open ReactTestingLibrary;
 open TestUtils;
 
-module FakeOptions = {
-  let opt1 = {CountrySelectTypes.Option.label: "Argentina", value: "ar"};
-  let opt2 = {CountrySelectTypes.Option.label: "Bangladesh", value: "bd"};
-  let opt3 = {CountrySelectTypes.Option.label: "Chile", value: "cl"};
-  let opt4 = {CountrySelectTypes.Option.label: "France", value: "fr"};
-  let opt5 = {CountrySelectTypes.Option.label: "Latvia", value: "lv"};
-  let opt6 = {CountrySelectTypes.Option.label: "Sweden", value: "se"};
-
-  let options = [|opt1, opt2, opt3, opt4, opt5, opt6|];
-};
-
 module FakeRequest: CountrySelectAPI.Request = {
   let getCountriesIO = _url =>
     CountrySelectAPI.Response.decode("fakeurl", FakeResponse.json)

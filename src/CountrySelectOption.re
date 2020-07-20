@@ -14,7 +14,7 @@ module Styles = {
     ]);
 
   let focusStyle = [
-    backgroundColor(Const.Color.menuItemFocused),
+    backgroundColor(Const.Color.activeItemBackground),
     borderWidth(px(0)),
     outlineWidth(px(0)),
   ];
