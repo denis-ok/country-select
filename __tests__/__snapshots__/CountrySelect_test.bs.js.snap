@@ -396,7 +396,6 @@ Object {
 exports[`Filter countries Country not found 1`] = `
 <div
   class="css-15tkzy3"
-  tabindex="-1"
 >
   Country not found
 </div>

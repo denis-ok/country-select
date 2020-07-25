@@ -1,3 +1,5 @@
+open Belt;
+
 module Const = CountrySelectConstants.Style;
 
 module ListItems = {
@@ -29,7 +31,8 @@ module ListItemsReactWindow = {
       width={Const.Size.menuWidthPx - 2}
       itemSize=Const.Size.menuOptionHeightPx
       itemCount={Array.length(children)}>
-      {({index, style}) => <div style> {children[index]} </div>}
+      {({index, style}) =>
+         <div style> {Array.getUnsafe(children, index)} </div>}
     </ReactWindow.FixedSizeList>;
   };
 };
@@ -53,9 +56,7 @@ module CountryNotFound = {
 
   [@react.component]
   let make = () =>
-    <div className=Styles.wrapper tabIndex=(-1)>
-      {React.string("Country not found")}
-    </div>;
+    <div className=Styles.wrapper> {React.string("Country not found")} </div>;
 };
 
 [@react.component]
@@ -67,19 +68,19 @@ let make =
       ~focusedIndex: option(int),
     ) => {
   let elements =
-    options->Belt.Array.mapWithIndex(
-      (index, {value, label} as option: CountrySelectTypes.Option.t) =>
+    options->Array.mapWithIndex(
+      (index, {value, label} as country: CountrySelectTypes.Option.t) =>
       <CountrySelectOption
         key=value
         value
         label
-        isFocused=Belt.Option.(
+        isFocused=Option.(
           map(focusedIndex, idx => idx == index)->getWithDefault(false)
         )
-        isSelected=Belt.Option.(
+        isSelected=Option.(
           map(selectedCountry, c => c.value == value)->getWithDefault(false)
         )
-        onClick={() => onChangeCountry(option)}
+        onClick={() => onChangeCountry(country)}
       />
     );
 
