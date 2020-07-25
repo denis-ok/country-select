@@ -122,14 +122,6 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       | None => false
       };
 
-    let filterFocused =
-      switch (focusedSection) {
-      | Some(MenuOpenedFilter) => true
-      | Some(MenuClosedButton)
-      | Some(MenuOpenedFilterAndOption(_))
-      | None => false
-      };
-
     let filteredOptions = {
       switch (options) {
       | None => None
@@ -317,7 +309,6 @@ module Functor = (Request: CountrySelectAPI.Request) => {
                     value=filter
                     onChange=onChangeFilter
                     onFocus=onFocusFilter
-                    focused=filterFocused
                   />
                   {switch (filteredOptions) {
                    | Some(filteredOptions) =>
