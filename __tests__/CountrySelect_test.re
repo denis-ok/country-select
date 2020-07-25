@@ -198,11 +198,35 @@ describe("KeyDown handling", () => {
          })
     });
 
+    testPromise("Tab", () => {
+      renderFocusedFilter()
+      |> Promise.map(((rendered, input)) => {
+           Event.pressTab(input);
+           rendered
+           |> getByRole'("button")
+           |> expect
+           |> toHaveAttribute("aria-expanded", ~value="false");
+         })
+    });
+
     testPromise("ArrowDown -> Enter", () => {
       renderFocusedFilter()
       |> Promise.map(((rendered, input)) => {
            Event.pressArrowDown(input);
            Event.pressEnter(input);
+           rendered |> getByRole'("button");
+         })
+      |> Promise.map(el =>
+           expect(el)
+           |> toHaveTextContent(`Str("Argentina"), ~options=?None)
+         )
+    });
+
+    testPromise("ArrowDown -> Tab", () => {
+      renderFocusedFilter()
+      |> Promise.map(((rendered, input)) => {
+           Event.pressArrowDown(input);
+           Event.pressTab(input);
            rendered |> getByRole'("button");
          })
       |> Promise.map(el =>

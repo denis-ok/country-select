@@ -71,7 +71,6 @@ let make =
 
   <div
     ref={ReactDOM.Ref.domRef(rootRef)}
-    tabIndex=0
     className=wrapperClass
     onClick={Functions.omit(onClick)}
     role="option">

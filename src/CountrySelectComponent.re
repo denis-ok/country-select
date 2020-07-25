@@ -220,12 +220,12 @@ module Functor = (Request: CountrySelectAPI.Request) => {
         switch (key) {
         | ArrowUp => ToggleMenu
         | ArrowDown
-        | Enter
-        | Tab =>
+        | Enter =>
           switch (filteredOptions) {
           | None => SetFocusedSection(Button)
           | Some(_) => focusOption(0)
           }
+        | Tab
         | Escape => Blur
         | PageUp
         | PageDown
@@ -244,12 +244,12 @@ module Functor = (Request: CountrySelectAPI.Request) => {
         | ArrowUp => focusOption(focusedIndex - 1)
         | ArrowDown => focusOption(focusedIndex + 1)
         | Space
+        | Tab
         | Enter =>
           switch (options[focusedIndex]) {
           | Some(country) => SelectCountry(country, onChange)
           | None => NoOp
           }
-        | Tab => SetFocusedSection(Filter)
         | PageUp => focusOption(focusedIndex - 4)
         | PageDown => focusOption(focusedIndex + 4)
         | Escape => Blur
