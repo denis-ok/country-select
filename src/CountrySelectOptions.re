@@ -64,7 +64,6 @@ let make =
       ~options: array(CountrySelectTypes.Option.t),
       ~onChangeCountry: CountrySelectTypes.Option.t => unit,
       ~selectedCountry: option(CountrySelectTypes.Option.t),
-      ~onKeyDown: ReactEvent.Keyboard.t => unit,
       ~focusedIndex: option(int),
     ) => {
   let elements =
@@ -81,7 +80,6 @@ let make =
           map(selectedCountry, c => c.value == value)->getWithDefault(false)
         )
         onClick={() => onChangeCountry(option)}
-        onKeyDown
       />
     );
 

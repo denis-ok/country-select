@@ -314,7 +314,6 @@ module Functor = (Request: CountrySelectAPI.Request) => {
                   {switch (filteredOptions) {
                    | Some(filteredOptions) =>
                      <CountrySelectOptions
-                       onKeyDown
                        options=filteredOptions
                        selectedCountry
                        onChangeCountry
