@@ -53,6 +53,16 @@ describe("CountrySelect", () => {
     |> Promise.map(() => rendered |> getAllByRole'("option"))
     |> Promise.map(el => expect(el) |> toMatchSnapshot);
   });
+
+  test("Pass className prop", () => {
+    open! JestDom;
+
+    render(<CountrySelect country=None onChange=ignore className="lala" />)
+    |> container
+    |> unsafeFirstChild
+    |> expect
+    |> toHaveClass(`Str("lala"), ~options=?None);
+  });
 });
 
 describe("Filter countries", () => {

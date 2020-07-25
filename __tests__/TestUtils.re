@@ -58,3 +58,5 @@ let findAllRole' = str => findAllByRole(~matcher=`Str(str), ~options=?None);
 
 let findByPlaceholderText' = str =>
   findByPlaceholderText(~matcher=`Str(str), ~options=?None);
+
+[@bs.get] external unsafeFirstChild: Dom.element => Dom.element = "firstChild";
