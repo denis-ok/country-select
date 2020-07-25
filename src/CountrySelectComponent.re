@@ -54,7 +54,7 @@ let reducer =
       {
         ...state,
         selectedCountry: Some(country),
-        focusedSection: Some(Button),
+        focusedSection: Some(MenuClosedButton),
       },
       _ => callback(country.value),
     )
@@ -65,9 +65,15 @@ let reducer =
     Update(
       switch (state.focusedSection) {
       | None
-      | Some(Button) => {...state, focusedSection: Some(Filter)}
-      | Some(Filter)
-      | Some(Options(_)) => {...state, focusedSection: Some(Button)}
+      | Some(MenuClosedButton) => {
+          ...state,
+          focusedSection: Some(MenuOpenedFilter),
+        }
+      | Some(MenuOpenedFilter)
+      | Some(MenuOpenedFilterAndOption(_)) => {
+          ...state,
+          focusedSection: Some(MenuClosedButton),
+        }
       },
     )
 
@@ -81,7 +87,8 @@ let reducer =
   | FocusOption(focusedIndex) =>
     Update({
       ...state,
-      focusedSection: Some(Types.FocusedSection.Options(focusedIndex)),
+      focusedSection:
+        Some(Types.FocusedSection.MenuOpenedFilterAndOption(focusedIndex)),
     })
 
   | NoOp => NoUpdate
@@ -101,25 +108,25 @@ module Functor = (Request: CountrySelectAPI.Request) => {
 
     let menuOpened =
       switch (focusedSection) {
-      | None
-      | Some(Button) => false
-      | Some(Filter) => true
-      | Some(Options(_)) => true
+      | Some(MenuOpenedFilter)
+      | Some(MenuOpenedFilterAndOption(_)) => true
+      | Some(MenuClosedButton)
+      | None => false
       };
 
     let buttonFocused =
       switch (focusedSection) {
-      | Some(Button) => true
-      | Some(Filter)
-      | Some(Options(_))
+      | Some(MenuClosedButton) => true
+      | Some(MenuOpenedFilter)
+      | Some(MenuOpenedFilterAndOption(_))
       | None => false
       };
 
     let filterFocused =
       switch (focusedSection) {
-      | Some(Filter) => true
-      | Some(Button)
-      | Some(Options(_))
+      | Some(MenuOpenedFilter) => true
+      | Some(MenuClosedButton)
+      | Some(MenuOpenedFilterAndOption(_))
       | None => false
       };
 
@@ -139,9 +146,9 @@ module Functor = (Request: CountrySelectAPI.Request) => {
 
     let focusedIndex =
       switch (focusedSection) {
-      | Some(Options(index)) => Some(index)
-      | Some(Button) => None
-      | Some(Filter) => None
+      | Some(MenuOpenedFilterAndOption(index)) => Some(index)
+      | Some(MenuClosedButton) => None
+      | Some(MenuOpenedFilter) => None
       | None => None
       };
 
@@ -178,9 +185,9 @@ module Functor = (Request: CountrySelectAPI.Request) => {
     let onChangeCountry = (country: Types.Option.t) =>
       SelectCountry(country, onChange)->send;
 
-    let onFocusButton = () => SetFocusedSection(Button)->send;
+    let onFocusButton = () => SetFocusedSection(MenuClosedButton)->send;
 
-    let onFocusFilter = () => SetFocusedSection(Filter)->send;
+    let onFocusFilter = () => SetFocusedSection(MenuOpenedFilter)->send;
 
     let focusOption = newIndex => {
       switch (filteredOptions) {
@@ -222,7 +229,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
         | ArrowDown
         | Enter =>
           switch (filteredOptions) {
-          | None => SetFocusedSection(Button)
+          | None => SetFocusedSection(MenuClosedButton)
           | Some(_) => focusOption(0)
           }
         | Tab
@@ -240,7 +247,8 @@ module Functor = (Request: CountrySelectAPI.Request) => {
         (key: Types.KeyboardButton.t, options, focusedIndex: int) => {
       let action =
         switch (key) {
-        | ArrowUp when focusedIndex == 0 => SetFocusedSection(Filter)
+        | ArrowUp when focusedIndex == 0 =>
+          SetFocusedSection(MenuOpenedFilter)
         | ArrowUp => focusOption(focusedIndex - 1)
         | ArrowDown => focusOption(focusedIndex + 1)
         | Space
@@ -263,9 +271,9 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       let key = Utils.ReactDom.keyFromEvent(event);
 
       switch (focusedSection) {
-      | Some(Button) => onButtonKeyDown(key)
-      | Some(Filter) => onFilterKeyDown(key)
-      | Some(Options(focusedIndex)) =>
+      | Some(MenuClosedButton) => onButtonKeyDown(key)
+      | Some(MenuOpenedFilter) => onFilterKeyDown(key)
+      | Some(MenuOpenedFilterAndOption(focusedIndex)) =>
         switch (filteredOptions) {
         | Some(options) => onOptionKeyDown(key, options, focusedIndex)
         | None => ()

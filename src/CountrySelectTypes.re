@@ -7,9 +7,9 @@ module Option = {
 
 module FocusedSection = {
   type t =
-    | Button
-    | Filter
-    | Options(int);
+    | MenuClosedButton
+    | MenuOpenedFilter
+    | MenuOpenedFilterAndOption(int);
 };
 
 module KeyboardButton = {
