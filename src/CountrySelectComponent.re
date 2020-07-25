@@ -192,16 +192,8 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       (options, country),
     );
 
-    let toggleMenu = () => ToggleMenu->send;
-
-    let onChangeFilter = str => ChangeFilter(str)->send;
-
     let onChangeCountry = (country: Types.Option.t) =>
       SelectCountry(country, onChange)->send;
-
-    let onFocusButton = () => SetFocusedSection(MenuClosedButton)->send;
-
-    let onFocusFilter = () => SetFocusedSection(MenuOpenedFilter)->send;
 
     let focusOption = newIndex => {
       switch (filteredOptions) {
@@ -318,8 +310,8 @@ module Functor = (Request: CountrySelectAPI.Request) => {
              )
              opened=menuOpened
              focused=buttonFocused
-             onClick=toggleMenu
-             onFocus=onFocusButton
+             onClick={() => ToggleMenu->send}
+             onFocus={() => SetFocusedSection(MenuClosedButton)->send}
              onKeyDown
            />
            {menuOpened
@@ -329,8 +321,8 @@ module Functor = (Request: CountrySelectAPI.Request) => {
                   <CountrySelectFilter
                     onKeyDown
                     value=filter
-                    onChange=onChangeFilter
-                    onFocus=onFocusFilter
+                    onChange={str => ChangeFilter(str)->send}
+                    onFocus={() => SetFocusedSection(MenuOpenedFilter)->send}
                   />
                   {switch (filteredOptions) {
                    | Some(filteredOptions) =>
