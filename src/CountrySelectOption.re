@@ -46,7 +46,6 @@ let make =
       ~value: string,
       ~label: string,
       ~onClick: unit => unit,
-      ~onKeyDown: ReactEvent.Keyboard.t => unit,
     ) => {
   let wrapperClass =
     switch (isFocused, isSelected) {
@@ -62,7 +61,7 @@ let make =
   React.useEffect1(
     () => {
       if (isFocused) {
-        Utils.ReactDom.focusRef(rootRef);
+        Utils.ReactDom.scrollIntoViewIfNeeded(rootRef);
       };
 
       None;
@@ -72,10 +71,8 @@ let make =
 
   <div
     ref={ReactDOM.Ref.domRef(rootRef)}
-    tabIndex=0
     className=wrapperClass
     onClick={Functions.omit(onClick)}
-    onKeyDown
     role="option">
     <FlagIconCss countryCode=value />
     <p className=Styles.paragraph> {React.string(label)} </p>

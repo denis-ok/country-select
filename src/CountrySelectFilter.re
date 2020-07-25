@@ -122,33 +122,17 @@ let make =
       ~onChange: string => unit,
       ~onFocus: unit => unit,
       ~onKeyDown: ReactEvent.Keyboard.t => unit,
-      ~focused: bool,
     ) => {
   let onChange = event => {
     let value = Utils.ReactDom.getStringValueFromEvent(event);
     onChange(value);
   };
 
-  let inputRef: React.ref(Js.Nullable.t(Dom.element)) =
-    React.useRef(Js.Nullable.null);
-
-  React.useEffect1(
-    () => {
-      if (focused) {
-        Utils.ReactDom.focusRef(inputRef);
-      };
-
-      None;
-    },
-    [|focused|],
-  );
-
   <div className=Styles.wrapper>
     <div className=Styles.iconInputWrapper>
       <div className=Styles.icon> Styles.searchIcon </div>
       <input
         autoFocus=true
-        ref={ReactDOMRe.Ref.domRef(inputRef)}
         name="searchCountry"
         value
         onChange

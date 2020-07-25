@@ -55,6 +55,7 @@
     "reason-react": "^0.9.1",
     "relude": "^0.63.1",
     "relude-fetch": "^0.8.0",
-    "relude-reason-react": "^0.10.0"
+    "relude-reason-react": "^0.10.0",
+    "scroll-into-view-if-needed": "^2.2.25"
   }
 }

@@ -97,6 +97,20 @@ module ReactDom = {
 
   let extractDomElementFromRef = (reactRef: React.ref(Js.Nullable.t('a))) =>
     reactRef.current->Js.Nullable.toOption;
+
+  let scrollIntoViewIfNeeded =
+      (inputRef: React.ref(Js.Nullable.t(Dom.element))) => {
+    switch (extractDomElementFromRef(inputRef)) {
+    | Some(el) =>
+      Js.Global.setTimeout(
+        () => ScrollIntoViewIfNeeded.scrollIntoViewIfNeeded(el),
+        10,
+      )
+      ->ignore
+
+    | None => ()
+    };
+  };
 };
 
 module Infix = {
