@@ -62,7 +62,7 @@ let make =
   React.useEffect1(
     () => {
       if (isFocused) {
-        Utils.ReactDom.focusRef(rootRef);
+        Utils.ReactDom.scrollIntoViewIfNeeded(rootRef);
       };
 
       None;
