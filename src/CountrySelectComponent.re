@@ -238,8 +238,8 @@ module Functor = (Request: CountrySelectAPI.Request) => {
           | None => NoOp
           | Some(_) => focusOption(0)
           }
-        | Tab
-        | Escape => Blur
+        | Tab => Blur
+        | Escape => ChangeFilter("")
         | PageUp
         | PageDown
         | Space

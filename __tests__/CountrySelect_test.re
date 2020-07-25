@@ -222,6 +222,22 @@ describe("KeyDown handling", () => {
          )
     });
 
+    testPromise("ArrowDown -> Type > Escape -> Type", () => {
+      renderFocusedFilter()
+      |> Promise.map(((rendered, input)) => {
+           Event.pressArrowDown(input);
+           UserEvent.typeText(input, "lala");
+           Event.pressEscape(input);
+           UserEvent.typeText(input, "sweden");
+           Event.pressArrowDown(input);
+           Event.pressEnter(input);
+           rendered
+           |> getByRole'("button")
+           |> expect
+           |> toHaveTextContent(`Str("Sweden"), ~options=?None);
+         })
+    });
+
     testPromise("ArrowDown -> Tab", () => {
       renderFocusedFilter()
       |> Promise.map(((rendered, input)) => {
