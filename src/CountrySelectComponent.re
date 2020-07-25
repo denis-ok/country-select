@@ -192,8 +192,10 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       (options, country),
     );
 
-    let onChangeCountry = (country: Types.Option.t) =>
-      SelectCountry(country, onChange)->send;
+    let onChangeCountry =
+      React.useCallback0((country: Types.Option.t) =>
+        SelectCountry(country, onChange)->send
+      );
 
     let focusOption = newIndex => {
       switch (filteredOptions) {

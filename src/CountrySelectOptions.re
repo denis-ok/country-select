@@ -89,3 +89,17 @@ let make =
     <ListItemsReactWindow> elements </ListItemsReactWindow>;
   };
 };
+
+module Memo = {
+  type props = {
+    .
+    "options": array(CountrySelectTypes.Option.t),
+    "onChangeCountry": CountrySelectTypes.Option.t => unit,
+    "selectedCountry": option(CountrySelectTypes.Option.t),
+    "focusedIndex": option(int),
+  };
+
+  let makeProps = makeProps;
+
+  let make: React.component(props) = React.memo(make);
+};
