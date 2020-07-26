@@ -142,30 +142,6 @@ module Functor = (Request: CountrySelectAPI.Request) => {
     ) =
       ReludeReact.Reducer.useReducer(reducer, initialState);
 
-    let menuOpened =
-      switch (focusedSection) {
-      | Some(MenuOpenedFilter)
-      | Some(MenuOpenedFilterAndOption(_)) => true
-      | Some(MenuClosedButton)
-      | None => false
-      };
-
-    let buttonFocused =
-      switch (focusedSection) {
-      | Some(MenuClosedButton) => true
-      | Some(MenuOpenedFilter)
-      | Some(MenuOpenedFilterAndOption(_))
-      | None => false
-      };
-
-    let highlightedIndex =
-      switch (focusedSection) {
-      | Some(MenuOpenedFilterAndOption(index)) => Some(index)
-      | Some(MenuClosedButton) => None
-      | Some(MenuOpenedFilter) => None
-      | None => None
-      };
-
     ReludeReact.Effect.useIOOnMount(
       Request.getCountriesIO(optionsUrl),
       options => FetchCountriesSuccess(options)->send,
@@ -196,6 +172,30 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       React.useCallback0((country: Types.Option.t) =>
         SelectCountry(country, onChange)->send
       );
+
+    let menuOpened =
+      switch (focusedSection) {
+      | Some(MenuOpenedFilter)
+      | Some(MenuOpenedFilterAndOption(_)) => true
+      | Some(MenuClosedButton)
+      | None => false
+      };
+
+    let buttonFocused =
+      switch (focusedSection) {
+      | Some(MenuClosedButton) => true
+      | Some(MenuOpenedFilter)
+      | Some(MenuOpenedFilterAndOption(_))
+      | None => false
+      };
+
+    let highlightedIndex =
+      switch (focusedSection) {
+      | Some(MenuOpenedFilterAndOption(index)) => Some(index)
+      | Some(MenuClosedButton) => None
+      | Some(MenuOpenedFilter) => None
+      | None => None
+      };
 
     let highlightOption = index => {
       switch (filteredOptions) {
