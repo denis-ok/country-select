@@ -37,7 +37,7 @@ type action =
   | SetRootRef(React.ref(Js.Nullable.t(Dom.element)))
   | ToggleMenu
   | Blur
-  | FocusOption(int)
+  | HighlightOption(int)
   | NoOp;
 
 let reducer =
@@ -117,11 +117,11 @@ let reducer =
       filteredOptions: state.options,
     })
 
-  | FocusOption(focusedIndex) =>
+  | HighlightOption(index) =>
     Update({
       ...state,
       focusedSection:
-        Some(Types.FocusedSection.MenuOpenedFilterAndOption(focusedIndex)),
+        Some(Types.FocusedSection.MenuOpenedFilterAndOption(index)),
     })
 
   | NoOp => NoUpdate
@@ -158,7 +158,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       | None => false
       };
 
-    let focusedIndex =
+    let highlightedIndex =
       switch (focusedSection) {
       | Some(MenuOpenedFilterAndOption(index)) => Some(index)
       | Some(MenuClosedButton) => None
@@ -197,18 +197,18 @@ module Functor = (Request: CountrySelectAPI.Request) => {
         SelectCountry(country, onChange)->send
       );
 
-    let focusOption = newIndex => {
+    let highlightOption = index => {
       switch (filteredOptions) {
       | None => NoOp
       | Some(options) =>
         let maxIndex = Array.size(options) - 1;
 
-        if (newIndex < 0) {
-          FocusOption(0);
-        } else if (newIndex > maxIndex) {
-          FocusOption(maxIndex);
+        if (index < 0) {
+          HighlightOption(0);
+        } else if (index > maxIndex) {
+          HighlightOption(maxIndex);
         } else {
-          FocusOption(newIndex);
+          HighlightOption(index);
         };
       };
     };
@@ -238,7 +238,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
         | Enter =>
           switch (filteredOptions) {
           | None => NoOp
-          | Some(_) => focusOption(0)
+          | Some(_) => highlightOption(0)
           }
         | Tab => Blur
         | Escape => ChangeFilter("")
@@ -252,22 +252,22 @@ module Functor = (Request: CountrySelectAPI.Request) => {
     };
 
     let onOptionKeyDown =
-        (key: Types.KeyboardButton.t, options, focusedIndex: int) => {
+        (key: Types.KeyboardButton.t, options, highlightedIndex: int) => {
       let action =
         switch (key) {
-        | ArrowUp when focusedIndex == 0 =>
+        | ArrowUp when highlightedIndex == 0 =>
           SetFocusedSection(MenuOpenedFilter)
-        | ArrowUp => focusOption(focusedIndex - 1)
-        | ArrowDown => focusOption(focusedIndex + 1)
+        | ArrowUp => highlightOption(highlightedIndex - 1)
+        | ArrowDown => highlightOption(highlightedIndex + 1)
         | Space
         | Tab
         | Enter =>
-          switch (options[focusedIndex]) {
+          switch (options[highlightedIndex]) {
           | Some(country) => SelectCountry(country, onChange)
           | None => NoOp
           }
-        | PageUp => focusOption(focusedIndex - 4)
-        | PageDown => focusOption(focusedIndex + 4)
+        | PageUp => highlightOption(highlightedIndex - 4)
+        | PageDown => highlightOption(highlightedIndex + 4)
         | Escape => Blur
         | Unsupported => NoOp
         };
@@ -281,9 +281,9 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       switch (focusedSection) {
       | Some(MenuClosedButton) => onButtonKeyDown(key)
       | Some(MenuOpenedFilter) => onFilterKeyDown(key)
-      | Some(MenuOpenedFilterAndOption(focusedIndex)) =>
+      | Some(MenuOpenedFilterAndOption(highlightedIndex)) =>
         switch (filteredOptions) {
-        | Some(options) => onOptionKeyDown(key, options, focusedIndex)
+        | Some(options) => onOptionKeyDown(key, options, highlightedIndex)
         | None => ()
         }
       | None => ()
@@ -332,7 +332,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
                        options=filteredOptions
                        selectedCountry
                        onChangeCountry
-                       focusedIndex
+                       highlightedIndex
                      />
                    | None => <CountrySelectOptions.CountryNotFound />
                    }}
