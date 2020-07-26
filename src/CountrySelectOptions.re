@@ -65,7 +65,7 @@ let make =
       ~options: array(CountrySelectTypes.Option.t),
       ~onChangeCountry: CountrySelectTypes.Option.t => unit,
       ~selectedCountry: option(CountrySelectTypes.Option.t),
-      ~focusedIndex: option(int),
+      ~highlightedIndex: option(int),
     ) => {
   let elements =
     options->Array.mapWithIndex(
@@ -74,10 +74,10 @@ let make =
         key=value
         value
         label
-        isFocused=Option.(
-          map(focusedIndex, idx => idx == index)->getWithDefault(false)
+        highlighted=Option.(
+          map(highlightedIndex, idx => idx == index)->getWithDefault(false)
         )
-        isSelected=Option.(
+        selected=Option.(
           map(selectedCountry, c => c.value == value)->getWithDefault(false)
         )
         onClick={() => onChangeCountry(country)}
@@ -97,7 +97,7 @@ module Memo = {
     "options": array(CountrySelectTypes.Option.t),
     "onChangeCountry": CountrySelectTypes.Option.t => unit,
     "selectedCountry": option(CountrySelectTypes.Option.t),
-    "focusedIndex": option(int),
+    "highlightedIndex": option(int),
   };
 
   let makeProps = makeProps;

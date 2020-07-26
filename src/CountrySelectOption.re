@@ -31,7 +31,7 @@ module Styles = {
       focus(focusStyle),
     ]);
 
-  let focused = style(focusStyle);
+  let highlighted = style(focusStyle);
 
   let selected = style([fontWeight(`bold)]);
 };
@@ -41,17 +41,17 @@ open Styles;
 [@react.component]
 let make =
     (
-      ~isFocused: bool,
-      ~isSelected: bool,
+      ~highlighted: bool,
+      ~selected: bool,
       ~value: string,
       ~label: string,
       ~onClick: unit => unit,
     ) => {
   let wrapperClass =
-    switch (isFocused, isSelected) {
-    | (true, true) => {j|$(wrapper) $(focused) $(selected)|j}
+    switch (highlighted, selected) {
+    | (true, true) => {j|$(wrapper) $(highlighted) $(selected)|j}
     | (false, true) => {j|$(wrapper) $(selected)|j}
-    | (true, false) => {j|$(wrapper) $(focused)|j}
+    | (true, false) => {j|$(wrapper) $(highlighted)|j}
     | (false, false) => Styles.wrapper
     };
 
@@ -60,13 +60,13 @@ let make =
 
   React.useEffect1(
     () => {
-      if (isFocused) {
+      if (highlighted) {
         Utils.ReactDom.scrollIntoViewIfNeeded(rootRef);
       };
 
       None;
     },
-    [|isFocused|],
+    [|highlighted|],
   );
 
   <div

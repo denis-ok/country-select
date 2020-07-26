@@ -22,7 +22,7 @@ module CustomComponent = {
       label: string,
       value: string,
       isSelected: bool,
-      isFocused: bool,
+      isHighlighted: bool,
       children: React.element,
     };
   };
