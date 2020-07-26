@@ -14,7 +14,7 @@ type state = {
   filteredOptions: option(array(Types.Option.t)),
   selectedCountry: option(Types.Option.t),
   filter: string,
-  focusedSection: option(Types.FocusedSection.t),
+  focusedSection: Types.VisualState.t,
   rootRef: option(React.ref(Js.Nullable.t(Dom.element))),
 };
 
@@ -23,7 +23,7 @@ let initialState = {
   filteredOptions: None,
   selectedCountry: None,
   filter: "",
-  focusedSection: None,
+  focusedSection: MenuClosed(`Unfocused),
   rootRef: None,
 };
 
@@ -33,7 +33,7 @@ type action =
   | SetCountry(option(Types.Option.t))
   | SelectCountry(Types.Option.t, string => unit)
   | ChangeFilter(string)
-  | SetFocusedSection(Types.FocusedSection.t)
+  | SetFocusedSection(Types.VisualState.t)
   | SetRootRef(React.ref(Js.Nullable.t(Dom.element)))
   | ToggleMenu
   | Blur
@@ -60,7 +60,7 @@ let reducer =
       {
         ...state,
         selectedCountry: Some(country),
-        focusedSection: Some(MenuClosedButton),
+        focusedSection: MenuClosed(`Focused),
       },
       _ => callback(country.value),
     )
@@ -82,7 +82,7 @@ let reducer =
 
     let focusedSection =
       switch (filteredOptions) {
-      | None => Some(Types.FocusedSection.MenuOpenedFilter)
+      | None => Types.VisualState.MenuOpened(`Options)
       | _ => state.focusedSection
       };
 
@@ -91,28 +91,27 @@ let reducer =
   | ToggleMenu =>
     Update(
       switch (state.focusedSection) {
-      | None
-      | Some(MenuClosedButton) => {
+      | MenuClosed(`Unfocused)
+      | MenuClosed(`Focused) => {
           ...state,
-          focusedSection: Some(MenuOpenedFilter),
+          focusedSection: MenuOpened(`Options),
         }
-      | Some(MenuOpenedFilter)
-      | Some(MenuOpenedFilterAndOption(_)) => {
+      | MenuOpened(`Options)
+      | MenuOpened(`HighlightedOption(_)) => {
           ...state,
-          focusedSection: Some(MenuClosedButton),
+          focusedSection: MenuClosed(`Focused),
         }
       },
     )
 
-  | SetFocusedSection(element) =>
-    Update({...state, focusedSection: Some(element)})
+  | SetFocusedSection(section) => Update({...state, focusedSection: section})
 
   | SetRootRef(ref_) => Update({...state, rootRef: Some(ref_)})
 
   | Blur =>
     Update({
       ...state,
-      focusedSection: None,
+      focusedSection: MenuClosed(`Unfocused),
       filter: "",
       filteredOptions: state.options,
     })
@@ -120,8 +119,7 @@ let reducer =
   | HighlightOption(index) =>
     Update({
       ...state,
-      focusedSection:
-        Some(Types.FocusedSection.MenuOpenedFilterAndOption(index)),
+      focusedSection: MenuOpened(`HighlightedOption(index)),
     })
 
   | NoOp => NoUpdate
@@ -175,26 +173,24 @@ module Functor = (Request: CountrySelectAPI.Request) => {
 
     let menuOpened =
       switch (focusedSection) {
-      | Some(MenuOpenedFilter)
-      | Some(MenuOpenedFilterAndOption(_)) => true
-      | Some(MenuClosedButton)
-      | None => false
+      | MenuOpened(`Options)
+      | MenuOpened(`HighlightedOption(_)) => true
+      | MenuClosed(_) => false
       };
 
     let buttonFocused =
       switch (focusedSection) {
-      | Some(MenuClosedButton) => true
-      | Some(MenuOpenedFilter)
-      | Some(MenuOpenedFilterAndOption(_))
-      | None => false
+      | MenuClosed(`Focused) => true
+      | MenuClosed(`Unfocused)
+      | MenuOpened(`Options)
+      | MenuOpened(`HighlightedOption(_)) => false
       };
 
     let highlightedIndex =
       switch (focusedSection) {
-      | Some(MenuOpenedFilterAndOption(index)) => Some(index)
-      | Some(MenuClosedButton) => None
-      | Some(MenuOpenedFilter) => None
-      | None => None
+      | MenuOpened(`HighlightedOption(index)) => Some(index)
+      | MenuOpened(`Options)
+      | MenuClosed(_) => None
       };
 
     let highlightOption = index => {
@@ -256,7 +252,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       let action =
         switch (key) {
         | ArrowUp when highlightedIndex == 0 =>
-          SetFocusedSection(MenuOpenedFilter)
+          SetFocusedSection(MenuOpened(`Options))
         | ArrowUp => highlightOption(highlightedIndex - 1)
         | ArrowDown => highlightOption(highlightedIndex + 1)
         | Space
@@ -279,14 +275,14 @@ module Functor = (Request: CountrySelectAPI.Request) => {
       let key = Utils.ReactDom.keyFromEvent(event);
 
       switch (focusedSection) {
-      | Some(MenuClosedButton) => onButtonKeyDown(key)
-      | Some(MenuOpenedFilter) => onFilterKeyDown(key)
-      | Some(MenuOpenedFilterAndOption(highlightedIndex)) =>
+      | MenuClosed(`Focused) => onButtonKeyDown(key)
+      | MenuOpened(`Options) => onFilterKeyDown(key)
+      | MenuOpened(`HighlightedOption(highlightedIndex)) =>
         switch (filteredOptions) {
         | Some(options) => onOptionKeyDown(key, options, highlightedIndex)
         | None => ()
         }
-      | None => ()
+      | MenuClosed(`Unfocused) => ()
       };
     };
 
@@ -313,7 +309,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
              opened=menuOpened
              focused=buttonFocused
              onClick={() => ToggleMenu->send}
-             onFocus={() => SetFocusedSection(MenuClosedButton)->send}
+             onFocus={() => SetFocusedSection(MenuClosed(`Focused))->send}
              onKeyDown
            />
            {menuOpened
@@ -324,7 +320,9 @@ module Functor = (Request: CountrySelectAPI.Request) => {
                     onKeyDown
                     value=filter
                     onChange={str => ChangeFilter(str)->send}
-                    onFocus={() => SetFocusedSection(MenuOpenedFilter)->send}
+                    onFocus={() =>
+                      SetFocusedSection(MenuOpened(`Options))->send
+                    }
                   />
                   {switch (filteredOptions) {
                    | Some(filteredOptions) =>
