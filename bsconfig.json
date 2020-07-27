@@ -34,7 +34,8 @@
     "reason-react",
     "relude",
     "relude-fetch",
-    "relude-reason-react"
+    "relude-reason-react",
+    "bisect_ppx"
   ],
   "bs-dev-dependencies": [
     "@glennsl/bs-jest",
@@ -46,6 +47,7 @@
     "number": "+A-4-9-20",
     "error": "+A"
   },
+  "ppx-flags": [["bisect_ppx/ppx", "--exclude-files", ".*\/__tests__\/.*re$$"]],
   "suffix": ".bs.js",
   "refmt": 3
 }

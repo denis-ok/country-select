@@ -10,6 +10,13 @@ test-watch:
 	npm run jest -- --watchAll
 
 test-coverage:
+	rm -f *.coverage && \
+	npm run reason-clean && \
+	BISECT_ENABLE=yes npm run reason-build && \
+	make test && \
+	npx bisect-ppx-report html -o coverage
+
+jest-coverage:
 	npm run jest -- --coverage
 
 webpack:

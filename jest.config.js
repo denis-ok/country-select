@@ -16,4 +16,5 @@ module.exports = {
     "\\.(css)$": "identity-obj-proxy",
   },
   collectCoverageFrom: ["src/*.{js,jsx}"],
+  setupFilesAfterEnv: ["bisect_ppx/src/runtime/bucklescript/jest.js"],
 };

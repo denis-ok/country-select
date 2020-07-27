@@ -7,26 +7,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Setup Node.js 13.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: '13.x'
+      - name: Setup Node.js 13.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: "13.x"
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Reason build
-      run: npm run reason-build
+      - name: Reason build
+        run: npm run reason-build
 
-    - name: Webpack build
-      run: NODE_ENV=production npm run webpack
+      - name: Webpack build
+        run: NODE_ENV=production npm run webpack
 
-    - name: Test
-      run: make test-coverage
+      - name: Test
+        run: make test-coverage
 
-    - name: Coveralls GitHub Action
-      uses: coverallsapp/github-action@v1.1.1
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Coveralls GitHub Action
+        run: npx bisect-ppx-report send-to Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PULL_REQUEST_NUMBER: ${{ github.event.number }}

@@ -26,6 +26,7 @@
     "@testing-library/dom": "^7.21.1",
     "@testing-library/react": "^10.4.7",
     "@testing-library/user-event": "^12.0.11",
+    "bisect_ppx": "^2.4.1",
     "bs-dom-testing-library": "^0.6.2",
     "bs-jest-dom": "^4.1.1",
     "bs-platform": "^8.0.3",
