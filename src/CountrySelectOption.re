@@ -31,9 +31,9 @@ module Styles = {
       focus(focusStyle),
     ]);
 
-  let highlighted = style(focusStyle);
+  let highlighted' = style(focusStyle);
 
-  let selected = style([fontWeight(`bold)]);
+  let selected' = style([fontWeight(`bold)]);
 };
 
 open Styles;
@@ -49,9 +49,9 @@ let make =
     ) => {
   let wrapperClass =
     switch (highlighted, selected) {
-    | (true, true) => {j|$(wrapper) $(highlighted) $(selected)|j}
-    | (false, true) => {j|$(wrapper) $(selected)|j}
-    | (true, false) => {j|$(wrapper) $(highlighted)|j}
+    | (true, true) => {j|$(wrapper) $(highlighted') $(selected')|j}
+    | (false, true) => {j|$(wrapper) $(selected')|j}
+    | (true, false) => {j|$(wrapper) $(highlighted')|j}
     | (false, false) => Styles.wrapper
     };
 

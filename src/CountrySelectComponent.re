@@ -328,7 +328,7 @@ module Functor = (Request: CountrySelectAPI.Request) => {
                   />
                   {switch (filteredOptions) {
                    | Some(filteredOptions) =>
-                     <CountrySelectOptions
+                     <CountrySelectOptions.Memo
                        options=filteredOptions
                        selectedCountry
                        onChangeCountry
