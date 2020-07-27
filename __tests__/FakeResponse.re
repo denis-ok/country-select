@@ -4,7 +4,8 @@ let data = {j|[
   {"label": "Chile", "value": "cl"},
   {"label": "France", "value": "fr"},
   {"label": "Latvia", "value": "lv"},
-  {"label": "Sweden", "value": "se"}
+  {"label": "Sweden", "value": "se"},
+  {"label": "Zimbabwe", "value": "zw"}
 ]|j};
 
 let json = Js.Json.parseExn(data);

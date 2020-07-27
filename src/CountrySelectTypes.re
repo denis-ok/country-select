@@ -5,11 +5,10 @@ module Option = {
   };
 };
 
-module FocusedSection = {
+module VisualState = {
   type t =
-    | MenuClosedButton
-    | MenuOpenedFilter
-    | MenuOpenedFilterAndOption(int);
+    | MenuClosed([ | `Focused | `Unfocused])
+    | MenuOpened([ | `Options(array(Option.t), option(int)) | `NoOptions]);
 };
 
 module KeyboardButton = {
