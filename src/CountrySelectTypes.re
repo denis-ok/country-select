@@ -8,13 +8,7 @@ module Option = {
 module VisualState = {
   type t =
     | MenuClosed([ | `Focused | `Unfocused])
-    | MenuOpened(
-        [
-          | `Options(array(Option.t))
-          | `OptionsWithHighlight(array(Option.t), int)
-          | `NoOptions
-        ],
-      );
+    | MenuOpened([ | `Options(array(Option.t), option(int)) | `NoOptions]);
 };
 
 module KeyboardButton = {
